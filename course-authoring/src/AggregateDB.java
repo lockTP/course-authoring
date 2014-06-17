@@ -218,7 +218,7 @@ public class AggregateDB extends dbInterface{
 	}
 
 	/*
-	 * @Return: a list of lists. The second list is an ordered list {id,providerId,name,authorId,url,tags}; 
+	 * @Return: a list of lists. The second list is an ordered list {id,providerId,name,authorId,url,domain,tags}; 
 	 * tags are created based on the available concepts inside the activity
 	 */
 	public ArrayList<ArrayList<String>> getActivities() {
@@ -226,7 +226,7 @@ public class AggregateDB extends dbInterface{
 		HashMap<String,String> contentTags = getContentTags();
 		try{
 			stmt = conn.createStatement();
-			String query = "select content_id,provider_id,display_name,creator_id,url from ent_content;";
+			String query = "select content_id,provider_id,display_name,creator_id,url,domain from ent_content;";
 			rs = stmt.executeQuery(query);	
 			while(rs.next()){
 				ArrayList<String> act = new ArrayList<String>();
@@ -235,6 +235,7 @@ public class AggregateDB extends dbInterface{
 				act.add(rs.getString(3));
 				act.add(rs.getString(4));
 				act.add(rs.getString(5));
+				act.add(rs.getString(6));
 				act.add(contentTags.get(rs.getString(1)));
 				activityList.add(act);
 			}

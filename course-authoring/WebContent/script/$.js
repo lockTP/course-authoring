@@ -55,6 +55,7 @@ function $call(method, url, params, fnCb, doEval, doAlertMsg) {
             }
             catch (ex) {
               res = { outcome: false, msg: ex };
+              alert("error in json");
             }
             if (!res.outcome && doAlertMsg) alert(res.msg);
             fnCb(res);

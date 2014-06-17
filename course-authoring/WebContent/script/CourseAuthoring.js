@@ -18,7 +18,7 @@ var state = {
   filter  : { actName: "", actNameTimer: null },
   is      : { initDone: false, loggedIn: false, my: true, ready: false },                           // flags
   rt      : { stateLoadCourseCnt: 0, stateLoadUnitCnt: 0 },                                         // runtime
-  usr     : { id: "tomek" }
+  usr     : { id: "admin" }
 };
 
 
@@ -40,8 +40,11 @@ function actGet(actId) {
 // ----------------------------------------------------------------------------------------------------------
 function actUnitGetIdx(courseId, unitId, resId, actId) {
   var R = unitGet(courseId, unitId).activityIds[resId];
-  for (var i=0, ni=R.length; i < ni; i++) {
-    if (R[i] === actId) return i;
+  if (R != null)
+  {
+	  for (var i=0, ni=R.length; i < ni; i++) {
+		    if (R[i] === actId) return i;
+	  }
   }
   return -1;
 }
@@ -136,6 +139,9 @@ function actPopulateUnitLst(unitId, resId, doForce) {
   $("act-unit-lst-cont").innerHTML = "";
   
   var R = state.curr.unit.activityIds[resId];
+  if (R == null)
+	  R = [];
+
   for (var i=0, ni=R.length; i < ni; i++) {
     var a = actGet(R[i]);
     
@@ -195,24 +201,28 @@ function actPopulateAvailLst(unitId, resId, doForce) {
   var P = resGet(state.curr.course.id, resId).providerIds;
   
   var filterAuthorId = ($("filter-act-author").selectedIndex === 0 ? null : $("filter-act-author").value);
-  var filterName     = (state.filter.actName.length === 0 ? null : state.filter.actName.split(/\s+/));
+  var filterName = (state.filter.actName.length === 0 ? null : state.filter.actName.toLowerCase().split(/\s+/));//before splitting we consider the lower case of filter name, (the name of filter is not changed)
   
   var actCnt = 0;
-  var isSelected = false;  // Is any of the available activities selected?  This is used later to decide whather or not to hide the activity details panel.
+  var isSelected = false;  // Is any of the available activities selected?  This is used later to decide whether or not to hide the activity details panel.
   
   for (var i=0, ni=data.activities.length; i < ni; i++) {
     var a = data.activities[i];
-    
-    if (u.activityIds[resId].indexOf(a.id) !== -1 || P.indexOf(a.providerId) === -1) continue;
+    if (a.domain !== state.curr.course.domainId)
+    	continue; // only activities of the same domain are shown in the available content list
+    if (u.activityIds[resId] != null){
+    if (u.activityIds[resId].indexOf(a.id) !== -1 || P.indexOf(a.providerId) === -1) 
+    	continue;
+    }
     if (filterAuthorId !== null && a.authorId !== filterAuthorId) continue;
     
     if (filterName) {
-      var doesSatisfyFilter = true;
-      var actNameSplit = a.name.split(/\s+/);
+      var doesSatisfyFilter = false;
+      var actNameSplit = a.name.toLowerCase().split(/\s+/); // before splitting we consider the lower case of activity name, (the name of activity is not changed)
       
       for (var j=0, nj=filterName.length; j < nj; j++) {
-        if (actNameSplit.indexOf(filterName[j]) === -1 && a.tags.indexOf(filterName[j]) === -1) {
-          doesSatisfyFilter = false;
+        if (actNameSplit.indexOf(filterName[j]) !== -1 | a.tags.indexOf(filterName[j]) !== -1) {
+          doesSatisfyFilter = true;
           break;
         }
       }
@@ -307,8 +317,12 @@ function actSelect(actUnitId, actAvailId, doForce) {
   var tr = null;
   
   // (2.1) Add-and-Remove button:
-  if (state.curr.unit.activityIds[state.curr.res02.id].indexOf(a.id) === -1) $clsRem($("act-det-btn"), "sel");
-  else $clsAdd($("act-det-btn"), "sel");
+  if (state.curr.unit.activityIds[state.curr.res02.id] != null)
+  {
+	  if (state.curr.unit.activityIds[state.curr.res02.id].indexOf(a.id) === -1) $clsRem($("act-det-btn"), "sel");  
+	  else $clsAdd($("act-det-btn"), "sel");
+  }
+  
   
   // (2.2) Provider:
   var prov = actGetProvider(a.providerId);
@@ -386,9 +400,9 @@ function actToggleUnit() {
 // ----^----
 function actToggleUnit_cbAdd(res) {
   if (!res || !res.outcome) return alert("An error has occured. Please try again.");
-  
+  if(unitGet(res.courseId, res.unitId).activityIds[res.resId] == null)
+	  unitGet(res.courseId, res.unitId).activityIds[res.resId] = [];
   unitGet(res.courseId, res.unitId).activityIds[res.resId].push(res.actId);
-  
   state.curr.actUnit  = state.curr.actAvail;
   state.curr.actAvail = null;
   appStateSave();
@@ -403,6 +417,8 @@ function actToggleUnit_cbRemove(res) {
   if (!res || !res.outcome) return alert("An error has occured. Please try again.");
   
   var idx = actUnitGetIdx(res.courseId, res.unitId, res.resId, res.actId);
+  if (unitGet(res.courseId, res.unitId).activityIds[res.resId] == null)
+	  unitGet(res.courseId, res.unitId).activityIds[res.resId] = [];
   unitGet(res.courseId, res.unitId).activityIds[res.resId].splice(idx, 1);
   
   state.curr.actAvail = state.curr.actUnit;
@@ -427,13 +443,16 @@ function appInit() {
   (h["my"] == 0 ? $clsRem($("tbar-btn-my"), "sel") : $clsAdd($("tbar-btn-my"), "sel"));
   
   appSetReady(false);
-  //$call("GET", "getData.php?usr=" + state.usr.id, null, function (res) { appInit_cb(res); }, true, false);
+  
+  //$call("GET", "GetData?usr=" + state.usr.id, null, function (res) { appInit_cb(res); }, true, false);
   appInit_cb({ outcome: true, data: data });
 }
 
 
 // ----^----
 function appInit_cb(res) {
+  //alert('ss'+res.meta.usr);
+  //console.log('ss'+res.meta.usr);
   data = res.data;
   coursePopulateLst();
 }
@@ -666,9 +685,12 @@ function coursePopulateLst() {
     $$("span", $$("td", tr), null, "institution", c.institution || "").width = "1";
     $$("td", tr, null, null, c.num).width = "1";
     $$("td", tr, null, null, c.name).width = "*";
-    $$("td", tr, null, null, c.date.year).width = "1";
-    $$("td", tr, null, null, c.date.term).width = "1";
-    $$("td", tr, null, null, c.created.by[0] + ". " + c.created.by.substr(c.created.by.indexOf(" "))).width = "1";
+    $$("td", tr, null, null, "Group:"+c.groupCount).width = "1";
+    var index = c.created.by.indexOf(" ");
+    var author = c.created.by[0] + ". " + c.created.by.substr(c.created.by.indexOf(" "));
+    if (index == -1)
+    	author = c.created.by;
+    $$("td", tr, null, null, author).width = "1";
     
     tr.onclick = function (courseId) { return function (e) { courseSelect(courseId, false); } }(c.id);
     
@@ -1116,16 +1138,21 @@ function resSelect02(resId, doForce) {
   $removeChildren($("filter-act-author"));
   $$("option", $("filter-act-author"), null, null, "All");
   
+
   var A = [];  // author IDs
   var U = state.curr.course.units;
   for (var i=0, ni=U.length; i < ni; i++) {
-    for (var j=0, nj=U[i].activityIds[resId].length; j < nj; j++) {
-      var act = actGet(U[i].activityIds[resId][j]);
-      if (!act.authorId) continue;
-      
-      if (A.indexOf(act.authorId) === -1) A.push(act.authorId);
-    }
-  }
+	  if (U[i].activityIds[resId] == null)
+	  {
+		  U[i].activityIds[resId] = [];
+	  }
+		  for (var j=0, nj=U[i].activityIds[resId].length; j < nj; j++) {
+		      var act = actGet(U[i].activityIds[resId][j]);
+		      if (!act.authorId) continue;
+		      
+		      if (A.indexOf(act.authorId) === -1) A.push(act.authorId);
+		  }
+   }
   
   for (var i=0, ni=A.length; i < ni; i++) {
     var a = actGetAuthor(A[i]);
@@ -1235,6 +1262,7 @@ function unitEdit_cb(res) {
 }
 
 
+//
 // ----------------------------------------------------------------------------------------------------------
 function unitGet(courseId, unitId) {
   var c = courseGet(courseId);

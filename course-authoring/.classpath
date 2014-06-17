@@ -8,21 +8,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/annotations-api.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/catalina-ant.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/catalina-ha.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/catalina-tribes.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/catalina.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/ecj-3.7.2.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/el-api.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/jasper-el.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/jasper.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/jsp-api.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/tomcat-coyote.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/tomcat-dbcp.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/tomcat-i18n-es.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/tomcat-i18n-fr.jar"/>
-	<classpathentry kind="lib" path="/Library/Tomcat/apache-tomcat-6.0.36/lib/tomcat-i18n-ja.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

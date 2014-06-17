@@ -71,7 +71,7 @@ public class GetData extends HttpServlet {
 		for (ArrayList<String> course : courseList)
 		{
 			output += "\n    {\n";
-			output += "      id: \""+course.get(0)+"\", institution: \""+course.get(1)+"\", name:\""+course.get(2)+"\", num:\""+course.get(3)+"\", created: { by: \""+course.get(4)+"\", on: \""+course.get(5)+"\" }, domainId: \""+course.get(6)+"\", groupCount: \""+course.get(7)+"\" isMy: "+(user.equals(course.get(8)))+",";
+			output += "      id: \""+course.get(0)+"\", institution: \""+course.get(1)+"\", name:\""+course.get(2)+"\", num:\""+course.get(3)+"\", created: { by: \""+course.get(4)+"\", on: \""+course.get(5)+"\" }, domainId: \""+course.get(6)+"\", groupCount: \""+course.get(7)+"\", isMy: "+(user.equals(course.get(8)))+",";
 			
 			//fetch all resources of the course
 			//each element of the resource is an ordered list of {id,name};
@@ -150,10 +150,10 @@ public class GetData extends HttpServlet {
 	{	    
 		String output = "  activities: [\n";
 		ArrayList<ArrayList<String>> activityList = agg_db.getActivities(); 
-		//each provider element is an ordered list containing {id,providerId,name,authorId,url,tags}; tags are the topics(comma separated text)
+		//each provider element is an ordered list containing {id,providerId,name,authorId,url,domain,tags}; tags are the topics(comma separated text)
 		for (ArrayList<String> act : activityList) 
 		{
-			output += "    { id: \""+act.get(0)+"\", providerId: \""+act.get(1)+"\", name: \""+act.get(2)+"\", authorId: \""+act.get(3)+"\", url: \""+act.get(4)+"\", "+getActTags(act.get(5))+" },\n"; 
+			output += "    { id: \""+act.get(0)+"\", providerId: \""+act.get(1)+"\", name: \""+act.get(2)+"\", authorId: \""+act.get(3)+"\", url: \""+act.get(4)+"\", domain: \""+act.get(5)+"\", "+getActTags(act.get(6))+" },\n"; 
 		}
 		if (activityList.isEmpty() == false)
 			output = output.substring(0, output.length()-2); // this is for ignoring the last comma
