@@ -210,10 +210,10 @@ public class GetData extends HttpServlet {
 		//each domain element is an ordered list containing {id,name}
 		for (ArrayList<String> dom : domainList) 
 		{
-			output += "    { id: \""+dom.get(0)+"\", name: \""+dom.get(1)+"\" },"; 
+			output += "    { id: \""+dom.get(0)+"\", name: \""+dom.get(1)+"\" },\n"; 
 		}
 		if (domainList.isEmpty() == false)
-			output = output.substring(0, output.length()-1); //this is for ignoring the last comma 
+			output = output.substring(0, output.length()-2); //this is for ignoring the last comma 
 		output += "\n  ]";
 		return output;
 	}
