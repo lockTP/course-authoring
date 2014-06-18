@@ -219,9 +219,11 @@ function actPopulateAvailLst(unitId, resId, doForce) {
     if (filterName) {
       var doesSatisfyFilter = false;
       var actNameSplit = a.name.toLowerCase().split(/\s+/); // before splitting we consider the lower case of activity name, (the name of activity is not changed)
-      
+      var tagSplit = [];
+      for (var temp = 0; temp <  a.tags.length; temp++)
+    	  tagSplit = tagSplit.concat(a.tags[temp].split(/\s+/));
       for (var j=0, nj=filterName.length; j < nj; j++) {
-        if (actNameSplit.indexOf(filterName[j]) !== -1 | a.tags.indexOf(filterName[j]) !== -1) {
+        if (actNameSplit.indexOf(filterName[j]) !== -1 | tagSplit.indexOf(filterName[j]) !== -1) {
           doesSatisfyFilter = true;
           break;
         }
