@@ -2,6 +2,6 @@
 <configuration>
 	<agg_dbstring>jdbc:mysql://localhost:3306/aggregate</agg_dbstring>
 	<agg_dbuser>root</agg_dbuser>
-	<agg_dbpass></agg_dbpass>
+	<agg_dbpass>123456</agg_dbpass>
 
 </configuration>
