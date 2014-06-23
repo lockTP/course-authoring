@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 	<agg_dbstring>jdbc:mysql://localhost:3306/aggregate</agg_dbstring>
-	<agg_dbuser>root</agg_dbuser>
-	<agg_dbpass>123456</agg_dbpass>
-
+	<agg_dbuser>student</agg_dbuser>
+	<agg_dbpass>student</agg_dbpass>
 </configuration>
