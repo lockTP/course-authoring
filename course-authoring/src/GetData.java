@@ -48,7 +48,8 @@ public class GetData extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-}
+		
+	}
 	
 	// this method returns the json which is the same as data.js
 	private String getUserJSON(String user, String group, AggregateDB agg_db)

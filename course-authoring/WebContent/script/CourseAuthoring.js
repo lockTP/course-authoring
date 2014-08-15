@@ -446,8 +446,8 @@ function appInit() {
   
   appSetReady(false);
   
-  //$call("GET", "GetData?usr=" + state.usr.id, null, function (res) { appInit_cb(res); }, true, false);
-  appInit_cb({ outcome: true, data: data });
+  $call("GET", "GetData.java?usr=" + state.usr.id, null, function (res) { appInit_cb(res); }, true, false);
+  //appInit_cb({ outcome: true, data: data });
 }
 
 
@@ -546,6 +546,15 @@ function courseAdd() {
   appSetReady(false);
   $call("GET", "unitAdd.php?course-id=" + state.curr.courseId + "&name=" + $enc(name) + "&credit-cnt=" + creditCnt, null, unitAdd_cb, true, false);
   */
+	  var params = {inn:{name:"foo", description:"bar", enabled:true}, out:null};       
+	  window.openDialog("/mydialog.xul", "",
+	    "chrome, dialog, modal, resizable=yes", params).focus();
+	  if (params.out) {
+	    // User clicked ok. Process changed arguments; e.g. write them to disk or whatever
+	  }
+	  else {
+	    // User clicked cancel. Typically, nothing is done here.
+	  }
 }
 
 
@@ -835,7 +844,7 @@ function resAdd01() {
   if ($lfold(function (a,b) { return a || (b.name === name); }, state.curr.course.resources, false)) return alert("A resource with that name already exists. No changes will be made.");
   
   appSetReady(false);
-  //$call("GET", "resAdd.php?course-id=" + state.curr.course.id + "&name=" + name, null, function (res) { resAdd01_cb(res); }, true, false);
+  //$call("GET", "ResAdd.java?usr=" + state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + name, null, function (res) { resAdd01_cb(res); }, true, false);
   resAdd01_cb({ outcome: true, courseId: state.curr.course.id, res: { id: "" + (new Date()).getTime(), name: name } });
 }
 

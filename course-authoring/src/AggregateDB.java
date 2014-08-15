@@ -1,12 +1,17 @@
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 
 public class AggregateDB extends dbInterface{
-	
+	DateFormat dateFormat;
+	Date date;
 	public AggregateDB(String connurl, String user, String pass){
 		super(connurl, user, pass); 
+		dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");		
 	}	
 
 	/*
@@ -311,6 +316,48 @@ public class AggregateDB extends dbInterface{
 			this.releaseStatement(stmt,rs);
 		}
 		return resActMap;
+	}
+
+	public boolean addRes(String cid, String name, String usr) {
+		int maxorder = gentMaxResOrder(cid);
+		try{
+			stmt = conn.createStatement();
+			date = new Date();
+			String query = "insert into ent_resource(course_id,display_name,order,creation_date,creator_id,visible)"
+					+ "value ('"+cid+"','"+name+"','"+maxorder+"','"+dateFormat.format(date)+"','"+usr+"','1');";
+			stmt.executeUpdate(query);				
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}	
+	}
+
+	private int gentMaxResOrder(String cid) {
+		int maxorder = 0;
+		try{
+			stmt = conn.createStatement();
+			String query = "select max(`order`) from ent_resource where course_id = '"+cid+"';";
+			rs = stmt.executeQuery(query);	
+			while(rs.next()){
+				maxorder = rs.getInt(1);
+			}
+			this.releaseStatement(stmt,rs);
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}
+		return maxorder;
 	}
 	
 }
