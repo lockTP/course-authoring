@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -146,7 +147,7 @@ public class AggregateDB extends dbInterface{
 			stmt = conn.createStatement();
 			String query = "SELECT resource_id,resource_name"
 							+ " FROM ent_resource"
-							+ " where course_id = '"+course_id+"';";
+							+ " where course_id = '"+course_id+"' order by `order` asc;";
 			rs = stmt.executeQuery(query);	
 			while(rs.next()){
 				ArrayList<String> res = new ArrayList<String>();
@@ -202,7 +203,8 @@ public class AggregateDB extends dbInterface{
 			stmt = conn.createStatement();
 			String query = "select topic_id, topic_name"
 							+ " from ent_topic"
-							+ " where course_id = '"+course_id+"';";
+							+ " where course_id = '"+course_id+"'"
+									+ "order by `order` asc;";
 			rs = stmt.executeQuery(query);	
 			while(rs.next()){
 				ArrayList<String> unit = new ArrayList<String>();
@@ -318,22 +320,27 @@ public class AggregateDB extends dbInterface{
 		return resActMap;
 	}
 
-	public boolean addRes(String cid, String name, String usr) {
-		int maxorder = gentMaxResOrder(cid);
+	public Integer addRes(String cid, String name, String usr) {
+		Integer resid = null;
+		int neworder = gentMaxResOrder(cid)+1;
 		try{
 			stmt = conn.createStatement();
 			date = new Date();
-			String query = "insert into ent_resource(course_id,display_name,order,creation_date,creator_id,visible)"
-					+ "value ('"+cid+"','"+name+"','"+maxorder+"','"+dateFormat.format(date)+"','"+usr+"','1');";
-			stmt.executeUpdate(query);				
+			String query = "insert into ent_resource (course_id,resource_name,display_name,`order`,creation_date,creator_id,visible)"
+					+ " value ('"+cid+"','"+name+"','"+name+"','"+neworder+"','"+dateFormat.format(date)+"','"+usr+"','1');";
+			stmt.executeUpdate(query,Statement.RETURN_GENERATED_KEYS);				
+			rs = stmt.getGeneratedKeys();
+	        if (rs.next()){
+	            resid=rs.getInt(1);
+	        }
 			this.releaseStatement(stmt,rs);
-			return true;
+			return resid;
 		}catch (SQLException ex) {
 			this.releaseStatement(stmt,rs);
 			System.out.println("SQLException: " + ex.getMessage()); 
 			System.out.println("SQLState: " + ex.getSQLState()); 
 			System.out.println("VendorError: " + ex.getErrorCode());
-			return false;
+			return resid;
 		}finally{
 			this.releaseStatement(stmt,rs);
 		}	
@@ -359,5 +366,251 @@ public class AggregateDB extends dbInterface{
 		}
 		return maxorder;
 	}
+
+	public boolean editRes(String resid, String name) {
+		try{
+			stmt = conn.createStatement();
+			String query = "update ent_resource set resource_name = '"+name+"', display_name='"+name+"' where resource_id = '"+resid+"';";
+			stmt.executeUpdate(query);				
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}	
+	}
+
+	public boolean deleteRes(String resid) {
+		try{
+			//step1: delete from resource_provider where resource_id =?
+			stmt = conn.createStatement();
+			String query = "delete from rel_resource_provider where resource_id = '"+resid+"';";
+			stmt.executeUpdate(query);
+			//step2: delete from rel_topic_content where resource_id =?
+			query = "delete from rel_topic_content where resource_id = '"+resid+"';";
+			stmt.executeUpdate(query);
+			//step3: delete from ent_resource where resource_id = ?
+			query = "delete from ent_resource where resource_id = '"+resid+"';";
+			stmt.executeUpdate(query);
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}		
+	}
+
+	public boolean swapRes(String resid1, int idx, int idxDelta) {
+		try{
+			stmt = conn.createStatement();
+			String query;
+			int resid2=0,idx2=0,idx1=0;
+			//find the res that will be swapped by the resid1
+			if (idxDelta > 0)
+				query = "select resource_id,`order` from ent_resource order by `order` limit "+idx+",1;"; //the record below resid1
+			else
+				query = "select resource_id,`order` from ent_resource order by `order` limit "+(idx-2)+",1;"; //the record above resid1
+			rs = stmt.executeQuery(query);				
+	        if (rs.next()){
+	            resid2=rs.getInt(1);
+	            idx2=rs.getInt(2);
+	        }	
+			//find the order of resid1
+			query = "select `order` from ent_resource where resource_id = '"+resid1+"';";
+			rs = stmt.executeQuery(query);				
+	        if (rs.next()){
+	            idx1=rs.getInt(1);
+	        }	
+	        //set the order of the resid2 as idx1
+			query = "update ent_resource set `order` = '"+idx1+"' where resource_id = '"+resid2+"';";
+			stmt.executeUpdate(query);	
+			//set the order of the resid1 as idx2
+			query = "update ent_resource set `order` = '"+idx2+"' where resource_id = '"+resid1+"';";
+			stmt.executeUpdate(query);	
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}	
 	
+	}
+
+	public boolean addResProvider(String resid, String provid) {
+		try{
+			stmt = conn.createStatement();
+			String query = "insert into rel_resource_provider (resource_id,provider_id) value ('"+resid+"','"+provid+"');";					
+			stmt.executeUpdate(query);				
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}	
+	}
+
+	public boolean deleteResProvider(String resid, String provid) {
+		try{
+			stmt = conn.createStatement();
+			String query = "delete from rel_resource_provider where resource_id='"+resid+"' and provider_id='"+provid+"';";					
+			stmt.executeUpdate(query);				
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}
+	}
+
+	public Integer addUnit(String cid, String name, String usr) {
+		Integer uid = null;
+		int neworder = getMaxUnitOrder(cid)+1;
+		try{
+			stmt = conn.createStatement();
+			date = new Date();
+			String query = "insert into ent_topic (course_id,topic_name,display_name,`order`,creation_date,creator_id,visible,active)"
+					+ " value ('"+cid+"','"+name+"','"+name+"','"+neworder+"','"+dateFormat.format(date)+"','"+usr+"','1','1');";
+			stmt.executeUpdate(query,Statement.RETURN_GENERATED_KEYS);				
+			rs = stmt.getGeneratedKeys();
+	        if (rs.next()){
+	            uid=rs.getInt(1);
+	        }
+			this.releaseStatement(stmt,rs);
+			return uid;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return uid;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}		
+	}
+
+	private int getMaxUnitOrder(String cid) {
+		int maxorder = 0;
+		try{
+			stmt = conn.createStatement();
+			String query = "select max(`order`) from ent_topic where course_id = '"+cid+"';";
+			rs = stmt.executeQuery(query);	
+			while(rs.next()){
+				maxorder = rs.getInt(1);
+			}
+			this.releaseStatement(stmt,rs);
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}
+		return maxorder;
+	}
+
+	public boolean editUnit(String uid, String name) {
+		try{
+			stmt = conn.createStatement();
+			String query = "update ent_topic set topic_name = '"+name+"', display_name='"+name+"' where topic_id = '"+uid+"';";
+			stmt.executeUpdate(query);				
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}	
+	}
+
+	public boolean deleteUnit(String uid) {
+		try{
+			//step1:delete from rel_topic_content where topic_id = ?
+			stmt = conn.createStatement();
+			String query = "delete from rel_topic_content where topic_id = '"+uid+"';";
+			stmt.executeUpdate(query);
+			//step2: delete from ent_topic where topic_id = ?
+			query = "delete from ent_topic where topic_id = '"+uid+"';";
+			stmt.executeUpdate(query);
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}		
+	}
+
+	public boolean swapUnit(String uid1, int idx, int idxDelta) {
+		try{
+			stmt = conn.createStatement();
+			String query;
+			int uid2=0,idx2=0,idx1=0;
+			//find the unit that will be swapped by the uid1
+			if (idxDelta > 0)
+				query = "select topic_id,`order` from ent_topic order by `order` limit "+idx+",1;"; //the record below uid1
+			else
+				query = "select topic_id,`order` from ent_topic order by `order` limit "+(idx-2)+",1;"; //the record above uid1
+			rs = stmt.executeQuery(query);				
+	        if (rs.next()){
+	            uid2=rs.getInt(1);
+	            idx2=rs.getInt(2);
+	        }	
+			//find the order of uid1
+			query = "select `order` from ent_topic where topic_id = '"+uid1+"';";
+			rs = stmt.executeQuery(query);				
+	        if (rs.next()){
+	            idx1=rs.getInt(1);
+	        }	
+	        //set the order of the uid2 as idx1
+			query = "update ent_topic set `order` = '"+idx1+"' where topic_id = '"+uid2+"';";
+			stmt.executeUpdate(query);	
+			//set the order of the uid1 as idx2
+			query = "update ent_topic set `order` = '"+idx2+"' where topic_id = '"+uid1+"';";
+			stmt.executeUpdate(query);	
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}	
+	}		
 }

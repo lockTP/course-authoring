@@ -37,10 +37,9 @@ public class GetData extends HttpServlet {
 		ConfigManager cm = new ConfigManager(this); // this object gets the
 		AggregateDB agg_db = new AggregateDB(cm.agg_dbstring, cm.agg_dbuser, cm.agg_dbpass);
 		agg_db.openConnection();
-		String output = getUserJSON(user,group, agg_db);		
+		String data = getUserJSON(user,group, agg_db);		
 		agg_db.closeConnection();
-		//TODO remove the print
-		System.out.println(output);
+		String output = "{outcome:\"true\", data:"+data+"}"; // data does not need to be in quotation since it is a list not a single value
 		out.print(output);
 	}
 

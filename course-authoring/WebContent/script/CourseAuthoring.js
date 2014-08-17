@@ -446,14 +446,14 @@ function appInit() {
   
   appSetReady(false);
   
-  $call("GET", "GetData.java?usr=" + state.usr.id, null, function (res) { appInit_cb(res); }, true, false);
+  $call("GET", "GetData?usr=" + state.usr.id, null, function (res) { appInit_cb(res); }, true, false);
   //appInit_cb({ outcome: true, data: data });
 }
 
 
 // ----^----
 function appInit_cb(res) {
-  //alert('ss'+res.meta.usr);
+   //alert('ss'+res.meta.usr);
   //console.log('ss'+res.meta.usr);
   data = res.data;
   coursePopulateLst();
@@ -844,15 +844,15 @@ function resAdd01() {
   if ($lfold(function (a,b) { return a || (b.name === name); }, state.curr.course.resources, false)) return alert("A resource with that name already exists. No changes will be made.");
   
   appSetReady(false);
-  //$call("GET", "ResAdd.java?usr=" + state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + name, null, function (res) { resAdd01_cb(res); }, true, false);
-  resAdd01_cb({ outcome: true, courseId: state.curr.course.id, res: { id: "" + (new Date()).getTime(), name: name } });
+  $call("GET", "ResAdd?usr=" + state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + name, null, function (res) { resAdd01_cb(res); }, true, false);
+  //resAdd01_cb({ outcome: true, courseId: state.curr.course.id, res: { id: "" + (new Date()).getTime(), name: name } });
 }
 
 
 // ----^----
 function resAdd01_cb(res) {
   if (!res || !res.outcome) return alert("An error has occured. Please try again.");
-  
+
   var c = courseGet(res.courseId);
   var r = { id: res.res.id, name: res.res.name, providerIds: [] };
   c.resources.push(r);
@@ -872,8 +872,8 @@ function resDelete01() {
   if (prompt("You are about to delete the resource '" + r.name + ".' Type the word DELETE below to confirm.").toLowerCase() !== "delete") return;
   
   appSetReady(false);
-  //$call("GET", "resDelete.php?course-id=" + state.curr.course.id + "&res-id=" + r.id, null, function (res) { resDelete01_cb(res); }, true, false);
-  resDelete01_cb({ outcome: true, courseId: state.curr.course.id, resId: r.id });
+  $call("GET", "ResDelete?course_id=" + state.curr.course.id + "&res_id=" + r.id, null, function (res) { resDelete01_cb(res); }, true, false);
+//  resDelete01_cb({ outcome: true, courseId: state.curr.course.id, resId: r.id });
 }
 
 
@@ -911,13 +911,14 @@ function resEdit01() {
   if ($lfold(function (a,b) { return a || (b.name === name); }, state.curr.course.resources, false)) return alert("A resource with that name already exists. No changes will be made.");
   
   appSetReady(false);
-  //$call("GET", "resEdit.php?course-id=" + state.curr.course.id + "&res-id=" + resId + "&name=" + name, null, function (res) { resEdit01_cb(res); }, true, false);
-  resEdit01_cb({ outcome: true, courseId: state.curr.course.id, resId: r.id, name: name });
+  $call("GET", "ResEdit?course_id="+state.curr.course.id+"&res_id=" + r.id + "&name=" + name, null, function (res) { resEdit01_cb(res); }, true, false);
+  //resEdit01_cb({ outcome: true, courseId: state.curr.course.id, resId: r.id, name: name });
 }
 
 
 // ----^----
 function resEdit01_cb(res) {
+
   if (!res || !res.outcome) return alert("An error has occured. Please try again.");
   
   resGet(res.courseId, res.resId).name = res.name;
@@ -957,7 +958,7 @@ function resMoveRel01(idxDelta) {
   if (!state.curr.res01 || idxDelta === 0) return;
   
   var idx = resGetIdx(state.curr.course.id, state.curr.res01.id);
-  
+
   if (idxDelta > 0 && idx === state.curr.course.resources.length - 1) return;
   if (idxDelta < 0 && idx === 0) return;
   
@@ -966,8 +967,8 @@ function resMoveRel01(idxDelta) {
   idx = Math.min(idx, state.curr.course.resources.length - 1);
   
   appSetReady(false);
-  //$call("GET", "resSetIdx.php?course-id=" + state.curr.course.id + "&res-id=" + state.curr.res01.id + "&idx=" + idx, null, function (res) { resMoveRel01_cb(res); }, true, false);
-  resMoveRel01_cb({ outcome: true, courseId: state.curr.course.id, resId: state.curr.res01.id, idx: idx, idxDelta: idxDelta });
+  $call("GET", "ResSetIdx?course_id=" + state.curr.course.id + "&res_id=" + state.curr.res01.id + "&idx=" + idx+"&idxDelta="+idxDelta, null, function (res) { resMoveRel01_cb(res); }, true, false);
+//  resMoveRel01_cb({ outcome: true, courseId: state.curr.course.id, resId: state.curr.res01.id, idx: idx, idxDelta: idxDelta });
 }
 
 
@@ -1071,12 +1072,12 @@ function resProvToggle(provId, btn) {
   
   var r = resGet(state.curr.course.id, state.curr.res01.id);
   if (r.providerIds.indexOf(provId) === -1) {
-    //$call("GET", "resProvAdd.php?course-id=" + state.curr.course.id + "&res-id=" + state.curr.res01.id + "&prov-id=" + provId, null, function (res) { resProvToggleAdd_cb(res, btn); }, true, false);
-    resProvToggleAdd_cb({ outcome: true, courseId: state.curr.course.id, resId: state.curr.res01.id, provId: provId }, btn);
+    $call("GET", "ResProvAdd?course_id=" + state.curr.course.id + "&res_id=" + state.curr.res01.id + "&prov_id=" + provId, null, function (res) { resProvToggleAdd_cb(res, btn); }, true, false);
+//    resProvToggleAdd_cb({ outcome: true, courseId: state.curr.course.id, resId: state.curr.res01.id, provId: provId }, btn);
   }
   else {
-    //$call("GET", "resProvRemove.php?course-id=" + state.curr.course.id + "&res-id=" + state.curr.res01.id + "&prov-id=" + provId, null, function (res) { resProvToggleRemove_cb(res, btn); }, true, false);
-    resProvToggleRemove_cb({ outcome: true, courseId: state.curr.course.id, resId: state.curr.res01.id, provId: provId }, btn);
+    $call("GET", "ResProvRemove?course_id=" + state.curr.course.id + "&res_id=" + state.curr.res01.id + "&prov_id=" + provId, null, function (res) { resProvToggleRemove_cb(res, btn); }, true, false);
+//    resProvToggleRemove_cb({ outcome: true, courseId: state.curr.course.id, resId: state.curr.res01.id, provId: provId }, btn);
   }
 }
 
@@ -1196,8 +1197,8 @@ function unitAdd() {
   if ($lfold(function (a,b) { return a || (b.name === name); }, state.curr.course.units, false)) return alert("A unit with that name already exists. No changes will be made.");
   
   appSetReady(false);
-  //$call("GET", "unitAdd.php?course-id=" + state.curr.course.id + "&name=" + name, null, function (res) { unitAdd_cb(res); }, true, false);
-  unitAdd_cb({ outcome: true, courseId: state.curr.course.id, unit: { id: "" + (new Date()).getTime(), name: name } });
+  $call("GET", "UnitAdd?usr="+state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + name, null, function (res) { unitAdd_cb(res); }, true, false);
+//  unitAdd_cb({ outcome: true, courseId: state.curr.course.id, unit: { id: "" + (new Date()).getTime(), name: name } });
 }
 
 
@@ -1222,8 +1223,8 @@ function unitDelete() {
   if (prompt("You are about to delete the unit '" + u.name + ".' Type the word DELETE below to confirm.").toLowerCase() !== "delete") return;
   
   appSetReady(false);
-  //$call("GET", "unitDelete.php?unit-id=" + unitId, null, function (res) { unitDelete_cb(res); }, true, false);
-  unitDelete_cb({ outcome: true, courseId: state.curr.course.id, unitId: u.id, sessId: null });
+  $call("GET", "UnitDelete?course_id=" + state.curr.course.id + "&unit_id=" + u.id, null, function (res) { unitDelete_cb(res); }, true, false);
+//  unitDelete_cb({ outcome: true, courseId: state.curr.course.id, unitId: u.id, sessId: null });
 }
 
 
@@ -1256,8 +1257,8 @@ function unitEdit() {
   if ($lfold(function (a,b) { return a || (b.name === name); }, state.curr.course.units, false)) return alert("A unit with that name already exists. No changes will be made.");
   
   appSetReady(false);
-  //$call("GET", "unitEdit.php?course-id=" + state.curr.course.id + "&unit-id=" + unitId + "&name=" + name, null, function (res) { unitEdit_cb(res); }, true, false);
-  unitEdit_cb({ outcome: true, courseId: state.curr.course.id, unitId: u.id, name: name, sessId: null });
+  $call("GET", "UnitEdit?course_id=" + state.curr.course.id + "&unit_id=" + u.id + "&name=" + name, null, function (res) { unitEdit_cb(res); }, true, false);
+  //unitEdit_cb({ outcome: true, courseId: state.curr.course.id, unitId: u.id, name: name, sessId: null });
 }
 
 
@@ -1301,7 +1302,7 @@ function unitMoveRel(idxDelta) {
   if (!state.curr.unit || idxDelta === 0) return;
   
   var idx = unitGetIdx(state.curr.course.id, state.curr.unit.id);
-  
+
   if (idxDelta > 0 && idx === state.curr.course.units.length - 1) return;
   if (idxDelta < 0 && idx === 0) return;
   
@@ -1310,8 +1311,8 @@ function unitMoveRel(idxDelta) {
   idx = Math.min(idx, state.curr.course.units.length - 1);
   
   appSetReady(false);
-  //$call("GET", "unitSetIdx.php?course-id=" + state.curr.course.id + "&unit-id=" + state.curr.unit.id + "&idx=" + idx, null, function (res) { unitMoveRel_cb(res); }, true, false);
-  unitMoveRel_cb({ outcome: true, courseId: state.curr.course.id, unitId: state.curr.unit.id, idx: idx, idxDelta: idxDelta, sessId: null });
+  $call("GET", "UnitSetIdx?course_id=" + state.curr.course.id + "&unit_id=" + state.curr.unit.id + "&idx=" + idx+"&idxDelta="+idxDelta, null, function (res) { unitMoveRel_cb(res); }, true, false);
+//  unitMoveRel_cb({ outcome: true, courseId: state.curr.course.id, unitId: state.curr.unit.id, idx: idx, idxDelta: idxDelta, sessId: null });
 }
 
 
