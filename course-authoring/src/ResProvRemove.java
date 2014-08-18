@@ -31,7 +31,7 @@ public class ResProvRemove extends HttpServlet {
 		String cid = request.getParameter("course_id");
 		String resid = request.getParameter("res_id");
 		String provid = request.getParameter("prov_id");
-		ConfigManager cm = new ConfigManager(this); // this object gets the
+		ConfigManager cm = new ConfigManager(this);
 		AggregateDB agg_db = new AggregateDB(cm.agg_dbstring, cm.agg_dbuser, cm.agg_dbpass);
 		agg_db.openConnection();
 		boolean outcome = agg_db.deleteResProvider(resid,provid);	

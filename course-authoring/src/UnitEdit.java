@@ -31,7 +31,7 @@ public class UnitEdit extends HttpServlet {
 		String name = request.getParameter("name");
 		String cid = request.getParameter("course_id");
 		String uid = request.getParameter("unit_id");
-		ConfigManager cm = new ConfigManager(this); // this object gets the
+		ConfigManager cm = new ConfigManager(this);
 		AggregateDB agg_db = new AggregateDB(cm.agg_dbstring, cm.agg_dbuser, cm.agg_dbpass);
 		agg_db.openConnection();
 		boolean outcome = agg_db.editUnit(uid,name);	

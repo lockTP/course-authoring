@@ -9,15 +9,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class ResEdit
+ * Servlet implementation class UnitRemoveAct
  */
-public class ResEdit extends HttpServlet {
+public class UnitRemoveAct extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ResEdit() {
+    public UnitRemoveAct() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -26,17 +26,18 @@ public class ResEdit extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html");
+	    response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
-		String name = request.getParameter("name");
-		String cid = request.getParameter("course_id");
+		String cid = request.getParameter("course_id"); 
+		String uid = request.getParameter("unit_id");
 		String resid = request.getParameter("res_id");
+		String actid = request.getParameter("act_id");
 		ConfigManager cm = new ConfigManager(this);
 		AggregateDB agg_db = new AggregateDB(cm.agg_dbstring, cm.agg_dbuser, cm.agg_dbpass);
 		agg_db.openConnection();
-		boolean outcome = agg_db.editRes(resid,name);	
+		boolean outcome = agg_db.deleteUnitAct(uid,resid,actid);
 		agg_db.closeConnection();
-		String output = "{outcome: \""+outcome+"\", courseId: \""+cid+"\", resId: \""+resid+"\", name: \""+name+"\"}";
+		String output = "{ outcome: \""+outcome+"\", courseId: \""+cid+"\", unitId:\""+uid+"\", resId: \""+resid+"\", actId: \""+actid+"\"}";
 		out.print(output);
 	}
 

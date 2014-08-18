@@ -31,7 +31,7 @@ public class ResAdd extends HttpServlet {
 		String cid = request.getParameter("course_id"); 
 		String name = request.getParameter("name");
 		String usr = request.getParameter("usr");
-		ConfigManager cm = new ConfigManager(this); // this object gets the
+		ConfigManager cm = new ConfigManager(this);
 		AggregateDB agg_db = new AggregateDB(cm.agg_dbstring, cm.agg_dbuser, cm.agg_dbpass);
 		agg_db.openConnection();
 		Integer resid = agg_db.addRes(cid,name,usr);

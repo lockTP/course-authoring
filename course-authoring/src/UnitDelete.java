@@ -30,7 +30,7 @@ public class UnitDelete extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		String cid = request.getParameter("course_id");
 		String uid = request.getParameter("unit_id");
-		ConfigManager cm = new ConfigManager(this); // this object gets the
+		ConfigManager cm = new ConfigManager(this); 
 		AggregateDB agg_db = new AggregateDB(cm.agg_dbstring, cm.agg_dbuser, cm.agg_dbpass);
 		agg_db.openConnection();
 		boolean outcome = agg_db.deleteUnit(uid);	

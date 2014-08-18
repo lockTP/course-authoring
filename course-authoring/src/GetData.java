@@ -34,7 +34,7 @@ public class GetData extends HttpServlet {
 		{
 			group = "";
 		}
-		ConfigManager cm = new ConfigManager(this); // this object gets the
+		ConfigManager cm = new ConfigManager(this); 
 		AggregateDB agg_db = new AggregateDB(cm.agg_dbstring, cm.agg_dbuser, cm.agg_dbpass);
 		agg_db.openConnection();
 		String data = getUserJSON(user,group, agg_db);		

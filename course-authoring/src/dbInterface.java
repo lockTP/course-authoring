@@ -64,5 +64,6 @@ public class dbInterface {
 			}catch (SQLException sqlEx) { sqlEx.printStackTrace(); } 
 			stmt = null;
 		}
-	}
+	}	
+	
 }

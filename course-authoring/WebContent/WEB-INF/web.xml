@@ -119,4 +119,54 @@
     <servlet-name>UnitSetIdx</servlet-name>
     <url-pattern>/UnitSetIdx</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>UnitAddAct</display-name>
+    <servlet-name>UnitAddAct</servlet-name>
+    <servlet-class>UnitAddAct</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UnitAddAct</servlet-name>
+    <url-pattern>/UnitAddAct</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>UnitRemoveAct</display-name>
+    <servlet-name>UnitRemoveAct</servlet-name>
+    <servlet-class>UnitRemoveAct</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UnitRemoveAct</servlet-name>
+    <url-pattern>/UnitRemoveAct</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>UnitGetLst</display-name>
+    <servlet-name>UnitGetLst</servlet-name>
+    <servlet-class>UnitGetLst</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UnitGetLst</servlet-name>
+    <url-pattern>/UnitGetLst</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CourseClone</display-name>
+    <servlet-name>CourseClone</servlet-name>
+    <servlet-class>CourseClone</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CourseClone</servlet-name>
+    <url-pattern>/CourseClone</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CourseDelete</display-name>
+    <servlet-name>CourseDelete</servlet-name>
+    <servlet-class>CourseDelete</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CourseDelete</servlet-name>
+    <url-pattern>/CourseDelete</url-pattern>
+  </servlet-mapping>
 </web-app>

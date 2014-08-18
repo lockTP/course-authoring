@@ -32,10 +32,10 @@ public class ResSetIdx extends HttpServlet {
 		String cid = request.getParameter("course_id");
 		String resid = request.getParameter("res_id");
 		int idxDelta = Integer.parseInt(request.getParameter("idxDelta"));
-		ConfigManager cm = new ConfigManager(this); // this object gets the
+		ConfigManager cm = new ConfigManager(this); 
 		AggregateDB agg_db = new AggregateDB(cm.agg_dbstring, cm.agg_dbuser, cm.agg_dbpass);
 		agg_db.openConnection();
-		boolean outcome = agg_db.swapRes(resid,idx,idxDelta);	
+		boolean outcome = agg_db.swapRes(cid,resid,idx,idxDelta);	
 		agg_db.closeConnection();
 		String output = "{outcome: \""+outcome+"\", courseId: \""+cid+"\", resId: \""+resid+"\", idx: \""+idx+"\", idxDelta: \""+idxDelta+"\"}";
 		out.print(output);

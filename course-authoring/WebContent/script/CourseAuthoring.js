@@ -6,6 +6,42 @@
  * http://character-code.com/arrows-html-codes.php
  */
 
+$(document).ready(function(){
+	
+	$(function() {
+		$("#dialog").dialog({
+			autoOpen: false
+		});
+		$("#button").on("click", function() {
+			$("#dialog").dialog("open");
+		});
+	});
+
+	//validating Form Fields.....
+	$("#submit").click(function(e){
+
+	var email = $("#email").val();
+	var name = $("#name").val();
+	var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+	if( email ==='' || name ==='')
+       {
+		 alert("Please fill all fields...!!!!!!");
+		 e.preventDefault();
+       }
+    else if(!(email).match(emailReg))
+       {
+         alert("Invalid Email...!!!!!!");
+		 e.preventDefault();
+       }    
+	else 
+	   {
+         alert("Form Submitted Successfully......");
+         alert($("#name").val()+"  " +$("#email").val());
+	   }
+	
+	});
+		
+});
 
 var CONST = {
   actFilterNameDelay : 1000,  // [ms]
@@ -384,16 +420,16 @@ function actToggleUnit() {
   // (1) Add to unit:
   if (state.curr.actAvail) {
     appSetReady(false);
-    //$call("GET", "unitAddAct.php?course-id=" + state.curr.course.id + "&unit-id=" + state.curr.unit.id + "&res-id=" + state.curr.res02.id + "&act-id=" + state.curr.actAvail.id, null, function (res) { actToggleUnit_cbAdd(res); }, true, false);
-    actToggleUnit_cbAdd({ outcome: true, courseId: state.curr.course.id, unitId: state.curr.unit.id, resId: state.curr.res02.id, actId: state.curr.actAvail.id });
+	$call("GET", "UnitAddAct?usr=" + state.usr.id+"&course_id=" + state.curr.course.id + "&unit_id=" + state.curr.unit.id + "&res_id=" + state.curr.res02.id + "&act_id=" + state.curr.actAvail.id, null, function (res) { actToggleUnit_cbAdd(res); }, true, false);
+//    actToggleUnit_cbAdd({ outcome: true, courseId: state.curr.course.id, unitId: state.curr.unit.id, resId: state.curr.res02.id, actId: state.curr.actAvail.id });
     return;
   }
   
   // (2) Remove from unit:
   if (state.curr.actUnit) {
     appSetReady(false);
-    //$call("GET", "unitRemoveAct.php?course-id=" + state.curr.course.id + "&unit-id=" + state.curr.unit.id + "&res-id=" + state.curr.res02.id + &act-id=" + state.curr.actUnit.id, null, function (res) { actToggleUnit_cbRemove(res); }, true, false);
-    actToggleUnit_cbRemove({ outcome: true, courseId: state.curr.course.id, unitId: state.curr.unit.id, resId: state.curr.res02.id, actId: state.curr.actUnit.id });
+    $call("GET", "UnitRemoveAct?course_id=" + state.curr.course.id + "&unit_id=" + state.curr.unit.id + "&res_id=" + state.curr.res02.id +"&act_id=" + state.curr.actUnit.id, null, function (res) { actToggleUnit_cbRemove(res); }, true, false);
+//    actToggleUnit_cbRemove({ outcome: true, courseId: state.curr.course.id, unitId: state.curr.unit.id, resId: state.curr.res02.id, actId: state.curr.actUnit.id });
     return;
   }
 }
@@ -546,15 +582,6 @@ function courseAdd() {
   appSetReady(false);
   $call("GET", "unitAdd.php?course-id=" + state.curr.courseId + "&name=" + $enc(name) + "&credit-cnt=" + creditCnt, null, unitAdd_cb, true, false);
   */
-	  var params = {inn:{name:"foo", description:"bar", enabled:true}, out:null};       
-	  window.openDialog("/mydialog.xul", "",
-	    "chrome, dialog, modal, resizable=yes", params).focus();
-	  if (params.out) {
-	    // User clicked ok. Process changed arguments; e.g. write them to disk or whatever
-	  }
-	  else {
-	    // User clicked cancel. Typically, nothing is done here.
-	  }
 }
 
 
@@ -574,8 +601,8 @@ function courseDelete() {
   if (prompt("You are about to delete the course '" + c.name.l + ".' Type the word DELETE below to confirm.").toLowerCase() !== "delete") return;
   
   appSetReady(false);
-  //$call("GET", "courseDelete.php?course-id=" + courseId, null, function (res) { courseDelete_cb(res); }, true, false);
-  courseDelete_cb({ outcome: true, courseId: c.id });
+  $call("GET", "CourseDelete?course_id=" + c.id, null, function (res) { courseDelete_cb(res); }, true, false);
+  //courseDelete_cb({ outcome: true, courseId: c.id });
 }
 
 
@@ -611,8 +638,8 @@ function courseClone() {
   if (name === null || name.length === 0) return;
   
   appSetReady(false);
-  //$call("GET", "courseClone.php?course-id=" + c.id + "&name=" + encodeURIComponent(name), null, function (res) { courseClone_cb(res); }, true, false);
-  courseClone_cb({ outcome: true, courseId: c.id, course: { id: "" + (new Date()).getTime(), institution: c.institution, name: name, num: c.num, date: c.date, created: c.created, domainId: c.domainId, isMy: true, units: [], resources: [] }});
+  $call("GET", "CourseClone?usr=" + state.usr.id+"&course_id=" + c.id + "&name=" + encodeURIComponent(name), null, function (res) { courseClone_cb(res); }, true, false);
+  //courseClone_cb({ outcome: true, courseId: c.id, course: { id: "" + (new Date()).getTime(), institution: c.institution, name: name, num: c.num, date: c.date, created: c.created, domainId: c.domainId, isMy: true, units: [], resources: [] }});
 }
 
 
@@ -751,7 +778,7 @@ function courseSelect(courseId, doForce) {
   if (!c.units) {
     $call(
       "GET",
-      "unitGetLst.php?course-id=" + courseId,
+      "UnitGetLst?course_id=" + courseId,
       null,
       function (res) {
         if (!res || !res.outcome) {

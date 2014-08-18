@@ -1,3 +1,4 @@
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
@@ -5,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class AggregateDB extends dbInterface{
@@ -105,25 +107,40 @@ public class AggregateDB extends dbInterface{
 	 */
 	public ArrayList<ArrayList<String>> getCourses() {
 		ArrayList<ArrayList<String>> courseList = new ArrayList<ArrayList<String>>();
+		Map<Integer,Integer> courseGroupMap = new HashMap<Integer,Integer>();
 		try{
-			stmt = conn.createStatement();
-			
-			String query = " select c.course_id,cr.affiliation_code, c.course_name, c.course_code, cr.creator_name,c.creation_date,c.domain, count(*) as groupcount,cr.creator_id"
+            stmt = conn.createStatement();			
+			String query = " select c.course_id, count(*)"
 							+ " from ent_course c, ent_creator cr, ent_group g"
 							+ " where c.creator_id = cr.creator_id and g.course_id = c.course_id"
 							+ " group by course_id;";
 			rs = stmt.executeQuery(query);	
 			while(rs.next()){
+				courseGroupMap.put(rs.getInt(1),rs.getInt(2));
+			}
+			this.releaseStatement(stmt, rs);			
+			stmt = conn.createStatement();			
+			query = " select c.course_id,cr.affiliation_code, c.course_name, c.course_code, cr.creator_name,c.creation_date,c.domain,cr.creator_id"
+							+ " from ent_course c, ent_creator cr"
+							+ " where c.creator_id = cr.creator_id;";
+			rs = stmt.executeQuery(query);	
+			int count=0,cid;
+			while(rs.next()){
 				ArrayList<String> course = new ArrayList<String>();
-				course.add(rs.getString(1));
+				cid = rs.getInt(1);
+				course.add(""+cid);
 				course.add(rs.getString(2));
 				course.add(rs.getString(3));
 				course.add(rs.getString(4));
 				course.add(rs.getString(5));
 				course.add(rs.getString(6));
 				course.add(rs.getString(7));
+				if (courseGroupMap.get(cid) != null)
+					count = courseGroupMap.get(cid);
+				else 
+					count = 0;
+				course.add(""+count);
 				course.add(rs.getString(8));
-				course.add(rs.getString(9));
 				courseList.add(course);
 			}
 			this.releaseStatement(stmt,rs);
@@ -145,7 +162,7 @@ public class AggregateDB extends dbInterface{
 		ArrayList<ArrayList<String>> resourceList = new ArrayList<ArrayList<String>>();
 		try{
 			stmt = conn.createStatement();
-			String query = "SELECT resource_id,resource_name"
+			String query = "SELECT resource_id,display_name"
 							+ " FROM ent_resource"
 							+ " where course_id = '"+course_id+"' order by `order` asc;";
 			rs = stmt.executeQuery(query);	
@@ -303,8 +320,6 @@ public class AggregateDB extends dbInterface{
 				ArrayList<String> acts = resActMap.get(res);
 				if (acts == null)
 					acts = new ArrayList<String>();
-				else
-					acts.add(act);
 				acts.add(act);
 				resActMap.put(res, acts);
 			}
@@ -391,10 +406,14 @@ public class AggregateDB extends dbInterface{
 			stmt = conn.createStatement();
 			String query = "delete from rel_resource_provider where resource_id = '"+resid+"';";
 			stmt.executeUpdate(query);
+			this.releaseStatement(stmt,rs);
 			//step2: delete from rel_topic_content where resource_id =?
+			stmt = conn.createStatement();
 			query = "delete from rel_topic_content where resource_id = '"+resid+"';";
 			stmt.executeUpdate(query);
+			this.releaseStatement(stmt,rs);
 			//step3: delete from ent_resource where resource_id = ?
+			stmt = conn.createStatement();
 			query = "delete from ent_resource where resource_id = '"+resid+"';";
 			stmt.executeUpdate(query);
 			this.releaseStatement(stmt,rs);
@@ -410,31 +429,34 @@ public class AggregateDB extends dbInterface{
 		}		
 	}
 
-	public boolean swapRes(String resid1, int idx, int idxDelta) {
+	public boolean swapRes(String cid, String resid1, int idx, int idxDelta) {
 		try{
 			stmt = conn.createStatement();
 			String query;
 			int resid2=0,idx2=0,idx1=0;
 			//find the res that will be swapped by the resid1
-			if (idxDelta > 0)
-				query = "select resource_id,`order` from ent_resource order by `order` limit "+idx+",1;"; //the record below resid1
-			else
-				query = "select resource_id,`order` from ent_resource order by `order` limit "+(idx-2)+",1;"; //the record above resid1
+			query = "select resource_id,`order` from ent_resource where course_id = '"+cid+"' order by `order` asc limit "+idx+",1;"; 
 			rs = stmt.executeQuery(query);				
 	        if (rs.next()){
 	            resid2=rs.getInt(1);
 	            idx2=rs.getInt(2);
-	        }	
+	        }
+			this.releaseStatement(stmt,rs);
 			//find the order of resid1
+			stmt = conn.createStatement();
 			query = "select `order` from ent_resource where resource_id = '"+resid1+"';";
 			rs = stmt.executeQuery(query);				
 	        if (rs.next()){
 	            idx1=rs.getInt(1);
-	        }	
+	        }
+			this.releaseStatement(stmt,rs);
 	        //set the order of the resid2 as idx1
+			stmt = conn.createStatement();
 			query = "update ent_resource set `order` = '"+idx1+"' where resource_id = '"+resid2+"';";
 			stmt.executeUpdate(query);	
+			this.releaseStatement(stmt,rs);
 			//set the order of the resid1 as idx2
+			stmt = conn.createStatement();
 			query = "update ent_resource set `order` = '"+idx2+"' where resource_id = '"+resid1+"';";
 			stmt.executeUpdate(query);	
 			this.releaseStatement(stmt,rs);
@@ -574,31 +596,34 @@ public class AggregateDB extends dbInterface{
 		}		
 	}
 
-	public boolean swapUnit(String uid1, int idx, int idxDelta) {
+	public boolean swapUnit(String cid, String uid1, int idx, int idxDelta) {
 		try{
 			stmt = conn.createStatement();
 			String query;
 			int uid2=0,idx2=0,idx1=0;
 			//find the unit that will be swapped by the uid1
-			if (idxDelta > 0)
-				query = "select topic_id,`order` from ent_topic order by `order` limit "+idx+",1;"; //the record below uid1
-			else
-				query = "select topic_id,`order` from ent_topic order by `order` limit "+(idx-2)+",1;"; //the record above uid1
+			query = "select topic_id,`order` from ent_topic where course_id = '"+cid+"' order by `order` asc limit "+idx+",1;"; 
 			rs = stmt.executeQuery(query);				
 	        if (rs.next()){
 	            uid2=rs.getInt(1);
 	            idx2=rs.getInt(2);
-	        }	
+	        }
+			this.releaseStatement(stmt,rs);
 			//find the order of uid1
+			stmt = conn.createStatement();
 			query = "select `order` from ent_topic where topic_id = '"+uid1+"';";
 			rs = stmt.executeQuery(query);				
 	        if (rs.next()){
 	            idx1=rs.getInt(1);
-	        }	
+	        }
+			this.releaseStatement(stmt,rs);
 	        //set the order of the uid2 as idx1
+			stmt = conn.createStatement();
 			query = "update ent_topic set `order` = '"+idx1+"' where topic_id = '"+uid2+"';";
 			stmt.executeUpdate(query);	
+			this.releaseStatement(stmt,rs);
 			//set the order of the uid1 as idx2
+			stmt = conn.createStatement();
 			query = "update ent_topic set `order` = '"+idx2+"' where topic_id = '"+uid1+"';";
 			stmt.executeUpdate(query);	
 			this.releaseStatement(stmt,rs);
@@ -612,5 +637,297 @@ public class AggregateDB extends dbInterface{
 		}finally{
 			this.releaseStatement(stmt,rs);
 		}	
-	}		
+	}
+
+	public boolean addUnitAct(String usr, String uid, String resid, String actid) {
+		try{
+			int neworder = getMaxUnitActOrder(uid, resid) + 1;
+			stmt = conn.createStatement();
+			date = new Date();
+			String displayName = "";
+			//get the display_name of the act
+			String query = "select content_name from ent_content where content_id = '"+actid+"';";
+			rs = stmt.executeQuery(query);	
+			if (rs.next()){
+				displayName = rs.getString(1);
+			}
+			this.releaseStatement(stmt,rs);
+			stmt = conn.createStatement();
+			query = "insert into rel_topic_content (topic_id,resource_id,content_id,display_name,`display_order`,creation_date,creator,visible)"
+					+ " value ('"+uid+"','"+resid+"','"+actid+"','"+displayName+"', '"+neworder+"', '"+dateFormat.format(date)+"','"+usr+"','1');";
+			stmt.executeUpdate(query);				
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}	
+	}	
+	
+	private int getMaxUnitActOrder(String uid, String resid) {
+		int maxorder = 0;
+		try{
+			stmt = conn.createStatement();
+			String query = "select max(`display_order`) from rel_topic_content where "
+					+ "topic_id = '"+uid+"' and resource_id = '"+resid+"';";
+			rs = stmt.executeQuery(query);	
+			while(rs.next()){
+				maxorder = rs.getInt(1);
+			}
+			this.releaseStatement(stmt,rs);
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}
+		return maxorder;
+	}
+
+	public boolean deleteUnitAct(String uid, String resid, String actid) {
+		try{
+			//delete from rel_topic_content where  topic_id = ? resource_id = ? content_id = ?
+			stmt = conn.createStatement();
+			String query = "delete from rel_topic_content where topic_id = '"+uid+"' and resource_id = '"+resid+"' and content_id='"+actid+"';";
+			stmt.executeUpdate(query);			
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}		
+	}
+
+	public Integer cloneCourse(String cid,String name,String usr) {
+		Integer newcid = null;
+		try{
+			Map<Integer,Integer> resOldNew = new HashMap<Integer,Integer>(); //key:resid, value:cloned resid
+			Map<Integer,Integer> unitOldNew = new HashMap<Integer,Integer>(); //unitid, value:cloned unitid
+			//Step1: select course information
+			stmt = conn.createStatement();
+			String query = "select `desc`,course_code,domain,visible from ent_course where course_id = '"+cid+"';";
+			String desc="",course_code="",domain="",visible="";
+			rs = stmt.executeQuery(query);	
+			if (rs.next())
+			{
+				desc = rs.getString(1);
+				course_code = rs.getString(2);
+				domain = rs.getString(3);
+				visible = rs.getString(4);
+			}
+			this.releaseStatement(stmt,rs);
+			//Step2: insert the cloned record in ent_course
+			stmt = conn.createStatement();
+			date = new Date();
+			query = "insert into ent_course(course_name,`desc`,course_code,domain,creation_date,creator_id,visible)"
+					+ " value ('"+name+"','"+desc+"','"+course_code+"','"+domain+"','"+dateFormat.format(date)+"','"+usr+"','"+visible+"');";
+			stmt.executeUpdate(query,Statement.RETURN_GENERATED_KEYS);				
+			rs = stmt.getGeneratedKeys();
+	        if (rs.next()){
+	            newcid=rs.getInt(1);
+	        }
+			this.releaseStatement(stmt,rs);
+			//Step3: select resources of the course that should be cloned 
+			stmt = conn.createStatement();
+	        query = "select resource_name,display_name,`desc`,`order`,visible,resource_id from ent_resource where course_id = '"+cid+"';";
+			rs = stmt.executeQuery(query);	
+			ResultSet tmpResRs = null,tmpProvRs = null;
+			String resource_name="",display_name="",order="",provid;
+			int resid,newresid=0;	
+			Statement stmt2,stmt3;
+			while (rs.next())
+			{
+				resource_name = rs.getString(1);
+				display_name = rs.getString(2);
+				desc = rs.getString(3);
+				order = rs.getString(4);
+				visible = rs.getString(5);
+				resid = rs.getInt(6);
+				//Step4: insert the cloned resource to ent_resource
+				stmt2 = conn.createStatement();
+				query = "insert into ent_resource(resource_name,display_name,`desc`,`order`,visible,course_id,creation_date,creator_id)" 
+						+ " value ('"+resource_name+"','"+display_name+"','"+desc+"','"+order+"','"
+		                  +visible+"', '"+newcid+"','"+dateFormat.format(date)+"','"+usr+"');";
+				stmt2.executeUpdate(query,Statement.RETURN_GENERATED_KEYS);
+				tmpResRs = stmt2.getGeneratedKeys();
+		        if (tmpResRs.next()){
+		        	newresid=tmpResRs.getInt(1); //new resid
+		        	resOldNew.put(resid, newresid); //mapping btw old and cloned resid
+		        }
+				this.releaseStatement(stmt2,tmpResRs);
+		    	//Step5: clone providers of the resource
+				stmt2 = conn.createStatement();
+				query = "select provider_id from rel_resource_provider where resource_id = '"+resid+"';";
+				tmpProvRs = stmt2.executeQuery(query);
+				while (tmpProvRs.next())
+				{
+					provid = tmpProvRs.getString(1);
+					stmt3 = conn.createStatement();
+					query = "insert into rel_resource_provider(resource_id,provider_id) value ('"+newresid+"','"+provid+"');";
+					stmt3.executeUpdate(query);
+					this.releaseStatement(stmt3, null);
+				}	
+				this.releaseStatement(stmt2,tmpProvRs);
+			}	
+			this.releaseStatement(stmt,rs);
+			//Step6: select topics of the course
+			stmt = conn.createStatement();
+			query = "select topic_name,display_name,`order`,visible,active,topic_id from ent_topic where course_id = '"+cid+"';";
+			String topic_name="",active="";
+			int unitid=0;
+			rs = stmt.executeQuery(query);
+			ResultSet tmpTopicRs = null;
+			int newUnitid;
+			while (rs.next())
+			{
+				topic_name = rs.getString(1);
+				display_name = rs.getString(2);
+				order = rs.getString(3);
+				visible = rs.getString(4);
+				active = rs.getString(5);
+				unitid = rs.getInt(6);
+				//Step7: insert the cloned topic to ent_topic
+				query = "insert into ent_topic (course_id,topic_name,display_name,`order`,creation_date,creator_id,visible,active)"
+						+ " value ('"+newcid+"','"+topic_name+"','"+display_name+"','"+order+"','"+dateFormat.format(date)+"','"+usr+"','"+visible+"','"+active+"');";
+				stmt2 = conn.createStatement();
+				stmt2.executeUpdate(query,Statement.RETURN_GENERATED_KEYS);
+				tmpTopicRs = stmt2.getGeneratedKeys();
+		        if (tmpTopicRs.next()){
+		        	newUnitid=tmpTopicRs.getInt(1); //new unitid
+		        	unitOldNew.put(unitid, newUnitid); //mapping btw old and cloned unitid
+		        }
+				this.releaseStatement(stmt2,tmpTopicRs);
+			}
+			this.releaseStatement(stmt,rs);
+			//step8: select activities associated to each of the units
+			stmt = conn.createStatement();
+			String topicIds = "";
+			for (int t : unitOldNew.keySet())
+				topicIds += "'"+t+"',";
+			topicIds = topicIds.substring(0, topicIds.length()-1); //for ignoring the last comma
+			query = "select topic_id,resource_id,content_id,display_name,display_order,visible"
+					+ " from rel_topic_content where topic_id in ("+topicIds+");";
+		    rs = stmt.executeQuery(query);
+		    int actid;
+		    while (rs.next())
+		    {
+		    	unitid = rs.getInt(1);
+		    	resid = rs.getInt(2);
+		    	actid = rs.getInt(3);
+		    	display_name = rs.getString(4);
+		    	order = rs.getString(5);
+		    	visible = rs.getString(6);
+		    	//Step 9: insert the cloned act in the rel_topic_content
+		    	query = "insert into rel_topic_content (topic_id,resource_id,content_id,display_name,`display_order`,creation_date,creator,visible)"
+					+ " value ('"+unitOldNew.get(unitid)+"','"+resOldNew.get(resid)+"','"+actid+"','"+display_name+"', '"+order+"', '"+dateFormat.format(date)+"','"+usr+"','"+visible+"');";
+		    	stmt2 = conn.createStatement();
+		    	stmt2.executeUpdate(query);
+				this.releaseStatement(stmt2,null);
+		    }		    
+			this.releaseStatement(stmt,rs);
+			return newcid;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			ex.printStackTrace(); 
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return newcid;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}	
+	}
+
+	public ArrayList<String> getCourse(Integer newcid) {
+		ArrayList<String> courseList = new ArrayList<String>();
+		try{
+			stmt = conn.createStatement();
+			String query = " select c.course_id,cr.affiliation_code, c.course_name, c.course_code, cr.creator_name,c.creation_date,c.domain,cr.creator_id"
+							+ " from ent_course c, ent_creator cr"
+							+ " where c.creator_id = cr.creator_id and c.course_id = '"+newcid+"';";
+			rs = stmt.executeQuery(query);	
+			while(rs.next()){
+				courseList.add(rs.getString(1));
+				courseList.add(rs.getString(2));
+				courseList.add(rs.getString(3));
+				courseList.add(rs.getString(4));
+				courseList.add(rs.getString(5));
+				courseList.add(rs.getString(6));
+				courseList.add(rs.getString(7));
+				courseList.add("0"); // no group is assigned to the course right after cloning.
+				courseList.add(rs.getString(8));
+			}
+			this.releaseStatement(stmt,rs);
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}
+		return courseList;
+	
+	}
+
+	public boolean deleteCourse(String cid) {
+		try{
+			//step1: get all resources in the cid
+			stmt = conn.createStatement();
+			String query = "select resource_id from ent_resource where course_id = '"+cid+"';";
+			rs = stmt.executeQuery(query);	
+			String resIds = "";
+			while(rs.next()){
+				resIds += rs.getString(1)+",";
+			}
+			resIds = resIds.substring(0,resIds.length()-1); //ignoring the last comma
+			this.releaseStatement(stmt, rs);
+			//step2: delete from resource_provider where resource_id in resIds
+			stmt = conn.createStatement();
+			query = "delete from rel_resource_provider where resource_id in ("+resIds+");";
+			stmt.executeUpdate(query);
+			this.releaseStatement(stmt, rs);
+			//step3: delete from rel_topic_content where resource_id in resIds
+			stmt = conn.createStatement();
+			query = "delete from rel_topic_content where resource_id in ("+resIds+");";
+			stmt.executeUpdate(query);
+			this.releaseStatement(stmt, rs);
+			//step4: delete from ent_resource where resource_id in resIds
+			stmt = conn.createStatement();
+			query = "delete from ent_resource where resource_id in ("+resIds+");";
+			stmt.executeUpdate(query);			
+			this.releaseStatement(stmt,rs);
+			//step5: delete units of cid
+			stmt = conn.createStatement();
+			query = "delete from ent_topic where course_id ='"+cid+"';";
+			stmt.executeUpdate(query);			
+			this.releaseStatement(stmt,rs);
+			//step6: delete the course cid
+			stmt = conn.createStatement();
+			query = "delete from ent_course where course_id ='"+cid+"';";
+			stmt.executeUpdate(query);			
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}		
+	}
 }

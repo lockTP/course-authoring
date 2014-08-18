@@ -30,12 +30,11 @@ public class ResDelete extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		String cid = request.getParameter("course_id");
 		String resid = request.getParameter("res_id");
-		ConfigManager cm = new ConfigManager(this); // this object gets the
+		ConfigManager cm = new ConfigManager(this); 
 		AggregateDB agg_db = new AggregateDB(cm.agg_dbstring, cm.agg_dbuser, cm.agg_dbpass);
 		agg_db.openConnection();
 		boolean outcome = agg_db.deleteRes(resid);	
 		agg_db.closeConnection();
-		//{ outcome: true, courseId: state.curr.course.id, resId: r.id }
 		String output = "{outcome: \""+outcome+"\", courseId: \""+cid+"\", resId: \""+resid+"\"}";
 		out.print(output);
 	}

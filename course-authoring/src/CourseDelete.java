@@ -9,15 +9,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class ResEdit
+ * Servlet implementation class CourseDelete
  */
-public class ResEdit extends HttpServlet {
+public class CourseDelete extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ResEdit() {
+    public CourseDelete() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -28,15 +28,13 @@ public class ResEdit extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
-		String name = request.getParameter("name");
 		String cid = request.getParameter("course_id");
-		String resid = request.getParameter("res_id");
-		ConfigManager cm = new ConfigManager(this);
+		ConfigManager cm = new ConfigManager(this); 
 		AggregateDB agg_db = new AggregateDB(cm.agg_dbstring, cm.agg_dbuser, cm.agg_dbpass);
 		agg_db.openConnection();
-		boolean outcome = agg_db.editRes(resid,name);	
+		boolean outcome = agg_db.deleteCourse(cid);	
 		agg_db.closeConnection();
-		String output = "{outcome: \""+outcome+"\", courseId: \""+cid+"\", resId: \""+resid+"\", name: \""+name+"\"}";
+		String output = "{outcome: \""+outcome+"\", courseId: \""+cid+"\"}";
 		out.print(output);
 	}
 
