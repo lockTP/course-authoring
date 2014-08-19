@@ -816,26 +816,30 @@ public class AggregateDB extends dbInterface{
 			String topicIds = "";
 			for (int t : unitOldNew.keySet())
 				topicIds += "'"+t+"',";
-			topicIds = topicIds.substring(0, topicIds.length()-1); //for ignoring the last comma
-			query = "select topic_id,resource_id,content_id,display_name,display_order,visible"
-					+ " from rel_topic_content where topic_id in ("+topicIds+");";
-		    rs = stmt.executeQuery(query);
-		    int actid;
-		    while (rs.next())
-		    {
-		    	unitid = rs.getInt(1);
-		    	resid = rs.getInt(2);
-		    	actid = rs.getInt(3);
-		    	display_name = rs.getString(4);
-		    	order = rs.getString(5);
-		    	visible = rs.getString(6);
-		    	//Step 9: insert the cloned act in the rel_topic_content
-		    	query = "insert into rel_topic_content (topic_id,resource_id,content_id,display_name,`display_order`,creation_date,creator,visible)"
-					+ " value ('"+unitOldNew.get(unitid)+"','"+resOldNew.get(resid)+"','"+actid+"','"+display_name+"', '"+order+"', '"+dateFormat.format(date)+"','"+usr+"','"+visible+"');";
-		    	stmt2 = conn.createStatement();
-		    	stmt2.executeUpdate(query);
-				this.releaseStatement(stmt2,null);
-		    }		    
+			if (topicIds.length() != 0)
+			{
+				topicIds = topicIds.substring(0, topicIds.length()-1); //for ignoring the last comma
+				query = "select topic_id,resource_id,content_id,display_name,display_order,visible"
+						+ " from rel_topic_content where topic_id in ("+topicIds+");";
+			    rs = stmt.executeQuery(query);
+			    int actid;
+			    while (rs.next())
+			    {
+			    	unitid = rs.getInt(1);
+			    	resid = rs.getInt(2);
+			    	actid = rs.getInt(3);
+			    	display_name = rs.getString(4);
+			    	order = rs.getString(5);
+			    	visible = rs.getString(6);
+			    	//Step 9: insert the cloned act in the rel_topic_content
+			    	query = "insert into rel_topic_content (topic_id,resource_id,content_id,display_name,`display_order`,creation_date,creator,visible)"
+						+ " value ('"+unitOldNew.get(unitid)+"','"+resOldNew.get(resid)+"','"+actid+"','"+display_name+"', '"+order+"', '"+dateFormat.format(date)+"','"+usr+"','"+visible+"');";
+			    	stmt2 = conn.createStatement();
+			    	stmt2.executeUpdate(query);
+					this.releaseStatement(stmt2,null);
+			    }	
+			}
+				    
 			this.releaseStatement(stmt,rs);
 			return newcid;
 		}catch (SQLException ex) {
