@@ -169,4 +169,14 @@
     <servlet-name>CourseDelete</servlet-name>
     <url-pattern>/CourseDelete</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ActSetIdx</display-name>
+    <servlet-name>ActSetIdx</servlet-name>
+    <servlet-class>ActSetIdx</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ActSetIdx</servlet-name>
+    <url-pattern>/ActSetIdx</url-pattern>
+  </servlet-mapping>
 </web-app>

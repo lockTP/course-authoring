@@ -310,7 +310,8 @@ public class AggregateDB extends dbInterface{
 			stmt = conn.createStatement();
 			String query = "SELECT resource_id,content_id"
 							+ " FROM rel_topic_content"
-							+ " where topic_id = '"+unit_id+"';";
+							+ " where topic_id = '"+unit_id+"'"
+									+ "order by display_order asc;";
 			rs = stmt.executeQuery(query);	
 			String res;
 			String act;
@@ -936,5 +937,48 @@ public class AggregateDB extends dbInterface{
 		}finally{
 			this.releaseStatement(stmt,rs);
 		}		
+	}
+
+	public boolean swapUnitAct(String uid, String resid, String actid, int idx, int idxDelta) {
+		try{
+			stmt = conn.createStatement();
+			String query;
+			int actid2=0,idx2=0,idx1=0;
+			//find the res that will be swapped by the actid
+			query = "select content_id,`display_order` from rel_topic_content where topic_id = '"+uid+"' and resource_id = '"+resid+"' order by `display_order` asc limit "+idx+",1;"; 
+			rs = stmt.executeQuery(query);				
+	        if (rs.next()){
+	            actid2=rs.getInt(1);
+	            idx2=rs.getInt(2);
+	        }
+			this.releaseStatement(stmt,rs);
+			//find the order of actid
+			stmt = conn.createStatement();
+			query = "select `display_order` from rel_topic_content where topic_id = '"+uid+"' and resource_id = '"+resid+"' and content_id = '"+actid+"';";
+			rs = stmt.executeQuery(query);				
+	        if (rs.next()){
+	            idx1=rs.getInt(1);
+	        }
+			this.releaseStatement(stmt,rs);
+	        //set the order of the actid2 as idx1
+			stmt = conn.createStatement();
+			query = "update rel_topic_content set `display_order` = '"+idx1+"' where topic_id = '"+uid+"' and resource_id = '"+resid+"' and content_id = '"+actid2+"';";
+			stmt.executeUpdate(query);	
+			this.releaseStatement(stmt,rs);
+			//set the order of the actid1 as idx2
+			stmt = conn.createStatement();
+			query = "update rel_topic_content set `display_order` = '"+idx2+"' where topic_id = '"+uid+"' and resource_id = '"+resid+"' and content_id = '"+actid+"';";
+			stmt.executeUpdate(query);	
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}	
 	}
 }

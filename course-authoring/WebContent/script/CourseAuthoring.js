@@ -111,8 +111,8 @@ function actMoveRel(idxDelta) {
   idx = Math.min(idx, state.curr.unit.activityIds[state.curr.res02.id].length - 1);
   
   appSetReady(false);
-  //$call("GET", "actSetIdx.php?course-id=" + state.curr.course.id + "&unit-id=" + state.curr.unit.id + "&res-id=" + state.curr.res02.id + "&act-id=" + state.curr.actUnit.id + "&idx=" + idx, null, function (res) { actMoveRel_cb(res); }, true, false);
-  actMoveRel_cb({ outcome: true, courseId: state.curr.course.id, unitId: state.curr.unit.id, resId: state.curr.res02.id, actId: state.curr.actUnit.id, idx: idx, idxDelta: idxDelta });
+  $call("GET", "ActSetIdx?course_id=" + state.curr.course.id + "&unit_id=" + state.curr.unit.id + "&res_id=" + state.curr.res02.id + "&act_id=" + state.curr.actUnit.id + "&idx=" + idx+"&idxDelta="+idxDelta, null, function (res) { actMoveRel_cb(res); }, true, false);
+//  actMoveRel_cb({ outcome: true, courseId: state.curr.course.id, unitId: state.curr.unit.id, resId: state.curr.res02.id, actId: state.curr.actUnit.id, idx: idx, idxDelta: idxDelta });
 }
 
 
