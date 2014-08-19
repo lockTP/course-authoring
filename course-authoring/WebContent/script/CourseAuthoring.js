@@ -6,43 +6,6 @@
  * http://character-code.com/arrows-html-codes.php
  */
 
-$(document).ready(function(){
-	
-	$(function() {
-		$("#dialog").dialog({
-			autoOpen: false
-		});
-		$("#button").on("click", function() {
-			$("#dialog").dialog("open");
-		});
-	});
-
-	//validating Form Fields.....
-	$("#submit").click(function(e){
-
-	var email = $("#email").val();
-	var name = $("#name").val();
-	var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-	if( email ==='' || name ==='')
-       {
-		 alert("Please fill all fields...!!!!!!");
-		 e.preventDefault();
-       }
-    else if(!(email).match(emailReg))
-       {
-         alert("Invalid Email...!!!!!!");
-		 e.preventDefault();
-       }    
-	else 
-	   {
-         alert("Form Submitted Successfully......");
-         alert($("#name").val()+"  " +$("#email").val());
-	   }
-	
-	});
-		
-});
-
 var CONST = {
   actFilterNameDelay : 1000,  // [ms]
   actReloadDelay     :  500   // [ms]
@@ -63,6 +26,14 @@ var state = {
 // ----------------------------------------------------------------------------------------------------------
 // ---[  ACTIVITIES  ]---------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------
+function show(which){
+if (!document.getElementById)
+return
+if (which.style.display=="block")
+	return;
+else
+which.style.display="block"
+}
 
 function actGet(actId) {
   for (var i=0, ni=data.activities.length; i < ni; i++) {
@@ -582,6 +553,7 @@ function courseAdd() {
   appSetReady(false);
   $call("GET", "unitAdd.php?course-id=" + state.curr.courseId + "&name=" + $enc(name) + "&credit-cnt=" + creditCnt, null, unitAdd_cb, true, false);
   */
+
 }
 
 
@@ -595,6 +567,7 @@ function courseAdd_cb(res) {
 
 // ----------------------------------------------------------------------------------------------------------
 function courseDelete() {
+  if (state.curr.course === null) return alert("Please select a course first. Add one if necessary.");
   if (!state.curr.course) return;
   
   var c = state.curr.course;
@@ -672,7 +645,10 @@ function courseGet(courseId) {
 
 // ----------------------------------------------------------------------------------------------------------
 function courseGetURL(courseId) {
-  alert("Below is the Mastery Grids URL for the currently selected course:\n\nhttp://...&courseId=" + state.curr.course.id);
+	if (state.curr.course === null) return alert("Please select a course first. Add one if necessary.");
+	alert("Below is the Mastery Grids URL for the currently selected course:\n\n" +
+  		"http://adapt2.sis.pitt.edu/um-vis-dev/index.html?usr=adl01&grp=ADL&sid=ZXFfI&cid="
+			+state.curr.course.id);
 }
 
 

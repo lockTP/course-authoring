@@ -12,43 +12,19 @@
   <script src="script/$.js"               type="text/javascript"></script>
   <script src="script/CourseAuthoring.js" type="text/javascript"></script>
   <script src="script/data.js"            type="text/javascript"></script>
-
-  <!-- including css file here-->
-  <link rel="stylesheet" href="style/dialog.css"/>
-	
-  <!-- including css & jQuery Dialog UI here-->
-  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-  <!-- <script type="text/javascript" src="script/dialog.js"></script> -->
   
 </head>
 
-
 <body onload="appInit();">
-
-<div id="dialog" title="Dialog Form">
-  <form action="" method="post">
-    <label>Name:</label><br/>
-    <input type="text" id="name" name="name"><br/>
-    <label>Email:</label><br/>
-    <input type="text" id="email" name="email"><br/>
-    <input type="submit" id="submit" value="Submit" />
-  </form>
-</div>
-<input type="button" id="button" value="Open Dialog Form" />
 
 <div id="loc-bar"></div>
 <div id="msg">Loading...</div>
 <div id="footer"></div>
-
-
 <div id="tbar">
   <input type="button" id="tbar-btn-my"    value="My courses only"           onclick="uiToggleMy();" />
   <input type="button" id="tbar-btn-clone" value="Clone the selected course" onclick="courseClone();" />
   <input type="button" id="tbar-btn-url"   value="Show the course URL"       onclick="courseGetURL();" />
 </div>
-
 
 <table id="main" cellpadding="0" cellspacing="0">
 <tr>

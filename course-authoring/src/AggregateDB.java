@@ -891,24 +891,27 @@ public class AggregateDB extends dbInterface{
 			String resIds = "";
 			while(rs.next()){
 				resIds += rs.getString(1)+",";
+			}			
+			this.releaseStatement(stmt, rs);
+			if (resIds.length() != 0)
+			{
+				resIds = resIds.substring(0,resIds.length()-1); //ignoring the last comma
+				//step2: delete from resource_provider where resource_id in resIds
+				stmt = conn.createStatement();
+				query = "delete from rel_resource_provider where resource_id in ("+resIds+");";
+				stmt.executeUpdate(query);
+				this.releaseStatement(stmt, rs);
+				//step3: delete from rel_topic_content where resource_id in resIds
+				stmt = conn.createStatement();
+				query = "delete from rel_topic_content where resource_id in ("+resIds+");";
+				stmt.executeUpdate(query);
+				this.releaseStatement(stmt, rs);
+				//step4: delete from ent_resource where resource_id in resIds
+				stmt = conn.createStatement();
+				query = "delete from ent_resource where resource_id in ("+resIds+");";
+				stmt.executeUpdate(query);			
+				this.releaseStatement(stmt,rs);
 			}
-			resIds = resIds.substring(0,resIds.length()-1); //ignoring the last comma
-			this.releaseStatement(stmt, rs);
-			//step2: delete from resource_provider where resource_id in resIds
-			stmt = conn.createStatement();
-			query = "delete from rel_resource_provider where resource_id in ("+resIds+");";
-			stmt.executeUpdate(query);
-			this.releaseStatement(stmt, rs);
-			//step3: delete from rel_topic_content where resource_id in resIds
-			stmt = conn.createStatement();
-			query = "delete from rel_topic_content where resource_id in ("+resIds+");";
-			stmt.executeUpdate(query);
-			this.releaseStatement(stmt, rs);
-			//step4: delete from ent_resource where resource_id in resIds
-			stmt = conn.createStatement();
-			query = "delete from ent_resource where resource_id in ("+resIds+");";
-			stmt.executeUpdate(query);			
-			this.releaseStatement(stmt,rs);
 			//step5: delete units of cid
 			stmt = conn.createStatement();
 			query = "delete from ent_topic where course_id ='"+cid+"';";
