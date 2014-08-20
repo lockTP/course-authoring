@@ -981,4 +981,32 @@ public class AggregateDB extends dbInterface{
 			this.releaseStatement(stmt,rs);
 		}	
 	}
+
+	public Integer addCourse(String name, String code, String desc,
+			String domain, String visible, String usr) {		
+		Integer newcid = null;
+		try{
+			stmt = conn.createStatement();
+			date = new Date();
+			String query = "insert into ent_course(course_name,`desc`,course_code,domain,creation_date,creator_id,visible)"
+					+ " value ('"+name+"','"+desc+"','"+code+"','"+domain+"','"+dateFormat.format(date)+"','"+usr+"','"+visible+"');";
+			stmt.executeUpdate(query,Statement.RETURN_GENERATED_KEYS);				
+			rs = stmt.getGeneratedKeys();
+	        if (rs.next()){
+	            newcid=rs.getInt(1);
+	        }
+			this.releaseStatement(stmt,rs);
+			return newcid;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			ex.printStackTrace(); 
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return newcid;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}	
+			
+	}
 }

@@ -6,17 +6,39 @@
 <head>
   <title>Course Authoring</title>
   
+  <!-- including css file here-->
+    <link rel="stylesheet" href="style/dialog.css"/>
+	
+	 <!-- including css & jQuery Dialog UI here-->
+	  
   <link href="http://fonts.googleapis.com/css?family=Cabin|Open+Sans:400,600" rel="stylesheet" type="text/css" />
   <link href="style/general.css"                                              rel="stylesheet" type="text/css" />
   
+  	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
   <script src="script/$.js"               type="text/javascript"></script>
   <script src="script/CourseAuthoring.js" type="text/javascript"></script>
   <script src="script/data.js"            type="text/javascript"></script>
   
-</head>
+ </head>
 
 <body onload="appInit();">
-
+ <div id="dialog" title="Add Course">
+	         <form action="" method="post">
+				<label>Course Name:</label><br/>
+				<input type="text" id="name" name="name"><br/>				
+				<label>Course Code:</label><br/>
+				<input type="text" id="code" name="code"><br/>
+				<label>Description:</label><br/>
+				<textarea id="desc" style="overflow-y:scroll;resize:none;height:70px" cols="50"></textarea><br/><br/>
+				<label>Domain:</label><select id = "domain" name="domain">
+				   <option value="java">Java</option>
+				   <option value="sql">SQL</option>
+			    </select>&nbsp;&nbsp;<input type="checkbox" id = "visible" name="visible" checked="checked">Visible<br/><br/>
+			   <input type="submit" id="save" value="Save" style="float: right;"/>
+			</form>
+		  </div>
 <div id="loc-bar"></div>
 <div id="msg">Loading...</div>
 <div id="footer"></div>
@@ -33,7 +55,7 @@
     <tr>
       <td width="1" class="txt">Courses (<span id="course-cnt">0</span>)</td>
       <td width="*">&nbsp;</td>
-      <td width="1" class="btn"><input type="button" value="&#10010;" onclick="courseAdd();"    title="Add new course" /></td>
+      <td width="1" class="btn"><input type="button" id="addCourse" value="&#10010;"    title="Add new course" /></td>
       <td width="1" class="btn"><input type="button" value="&#9998;"  onclick="courseEdit();"   title="Edit the selected course" /></td>
       <td width="1" class="btn"><input type="button" value="&#10005;" onclick="courseDelete();" title="Delete the selected course" /></td>
     </tr>

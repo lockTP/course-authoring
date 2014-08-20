@@ -179,4 +179,14 @@
     <servlet-name>ActSetIdx</servlet-name>
     <url-pattern>/ActSetIdx</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CourseAdd</display-name>
+    <servlet-name>CourseAdd</servlet-name>
+    <servlet-class>CourseAdd</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CourseAdd</servlet-name>
+    <url-pattern>/CourseAdd</url-pattern>
+  </servlet-mapping>
 </web-app>

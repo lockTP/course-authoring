@@ -6,6 +6,50 @@
  * http://character-code.com/arrows-html-codes.php
  */
 
+/*  
+ * Note: since there is a javascript class and every function starts with $, 
+ * if you $(document).ready, you'll receive error since it is not defined in the $.js file.
+ * Thus, whereever you need to explicitly use jquery functions, you need to call jQuery instead of $
+*/
+jQuery(document).ready(function(){
+	
+	jQuery(function() {
+		jQuery("#dialog").dialog({
+			autoOpen: false
+		});
+		jQuery("#addCourse").on("click", function() {
+			jQuery("#dialog").dialog("open");
+		});
+	});
+
+	//validating Form Fields.....
+	jQuery("#save").click(function(e){
+		
+
+	var code = jQuery("#code").val();
+	var name = jQuery("#name").val();
+	var desc = jQuery("#desc").val();
+	var domain = jQuery("#domain").val();	
+	var visible = jQuery("#visible").is(":checked") ? 1 : 0;
+	if( name ==='')
+       {
+		 alert("Please fill the course name");
+		 e.preventDefault();
+       }
+	else if( code ==='')
+    {
+		 alert("Please fill the course code");
+		 e.preventDefault();
+    }
+    else 
+	   {
+         courseAdd(code,name,desc,domain,visible);
+	   }
+	
+	});
+		
+});
+
 var CONST = {
   actFilterNameDelay : 1000,  // [ms]
   actReloadDelay     :  500   // [ms]
@@ -26,15 +70,6 @@ var state = {
 // ----------------------------------------------------------------------------------------------------------
 // ---[  ACTIVITIES  ]---------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------
-function show(which){
-if (!document.getElementById)
-return
-if (which.style.display=="block")
-	return;
-else
-which.style.display="block"
-}
-
 function actGet(actId) {
   for (var i=0, ni=data.activities.length; i < ni; i++) {
     var a = data.activities[i];
@@ -534,34 +569,22 @@ function appStateSave() {
 // ---[  COURSES  ]------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------
 
-function courseAdd() {
-  /*
-  if (state.curr.courseId === null) return alert("Please select a course first. Add one if necessary.");
-  
-  var specs = prompt("Enter coma-separated information of the new area in the following format\n\n    <area-name>,<credit-count>\n\ne.g.:\n\n    Systems and Technology,12", "name,credits");
-  if (specs === null || specs.length === 0) return;
-  
-  var A = specs.split(",");
-  if (A.length !== 2) return alert("Error: Incorrect format.");
-  
-  var name      = A[0];
-  var creditCnt = A[1];
-  
-  if (name.length === 0) return alert("Error: Name cannot be empty");
-  if (isNaN(creditCnt))  return alert("Error: Credit count has to be an integer.");
-  
-  appSetReady(false);
-  $call("GET", "unitAdd.php?course-id=" + state.curr.courseId + "&name=" + $enc(name) + "&credit-cnt=" + creditCnt, null, unitAdd_cb, true, false);
-  */
-
+function courseAdd(code,name,desc,domain,visible) { 
+	$call("GET", "CourseAdd?usr=" + state.usr.id+"&name=" + $enc(name) + "&code=" + $enc(code)+ "&desc=" + $enc(desc)+ "&domain=" + $enc(domain)+ "&visible="+visible, null, function (res) { courseAdd_cb(res); }, true, false);
 }
 
 
 // ----^----
 function courseAdd_cb(res) {
-  if (!res || !res.outcome) return alert("An error has occured. Please try again.");
-  
-  // ...
+  alert(res.outcome);
+	if (!res || !res.outcome)
+	  return alert("An error has occured. Please try again.");
+  else
+  {
+	  data.courses.push(res.course);	  
+	  coursePopulateLst(false);	  
+	  appSetReady(true);
+  }
 }
 
 
@@ -847,7 +870,7 @@ function resAdd01() {
   if ($lfold(function (a,b) { return a || (b.name === name); }, state.curr.course.resources, false)) return alert("A resource with that name already exists. No changes will be made.");
   
   appSetReady(false);
-  $call("GET", "ResAdd?usr=" + state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + name, null, function (res) { resAdd01_cb(res); }, true, false);
+  $call("GET", "ResAdd?usr=" + state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + $enc(name), null, function (res) { resAdd01_cb(res); }, true, false);
   //resAdd01_cb({ outcome: true, courseId: state.curr.course.id, res: { id: "" + (new Date()).getTime(), name: name } });
 }
 
@@ -1200,7 +1223,7 @@ function unitAdd() {
   if ($lfold(function (a,b) { return a || (b.name === name); }, state.curr.course.units, false)) return alert("A unit with that name already exists. No changes will be made.");
   
   appSetReady(false);
-  $call("GET", "UnitAdd?usr="+state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + name, null, function (res) { unitAdd_cb(res); }, true, false);
+  $call("GET", "UnitAdd?usr="+state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + $enc(name), null, function (res) { unitAdd_cb(res); }, true, false);
 //  unitAdd_cb({ outcome: true, courseId: state.curr.course.id, unit: { id: "" + (new Date()).getTime(), name: name } });
 }
 
