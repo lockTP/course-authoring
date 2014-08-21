@@ -48,7 +48,9 @@ public class CourseAdd extends HttpServlet {
 	private String getJSON(AggregateDB agg_db, Integer newcid,String usr) {
 		ArrayList<String> course = agg_db.getCourse(newcid);
 		String output = "{\n";
-		output += "      id: \""+course.get(0)+"\", institution: \""+course.get(1)+"\", name:\""+course.get(2)+"\", num:\""+course.get(3)+"\", created: { by: \""+course.get(4)+"\", on: \""+course.get(5)+"\" }, domainId: \""+course.get(6)+"\", groupCount: \""+course.get(7)+"\", isMy: "+(usr.equals(course.get(8)))+",";
+		output += "      id: \""+course.get(0)+"\", institution: \""+course.get(1)+"\", name:\""+course.get(2)+"\", num:\""+course.get(3)+
+				         "\", created: { by: \""+course.get(4)+"\", on: \""+course.get(5)+"\" }, domainId: \""+course.get(6)+
+				         "\", groupCount: \""+course.get(7)+"\", isMy: "+(usr.equals(course.get(8)))+", desc: \""+course.get(9)+"\", visible: \""+course.get(10)+"\", ";
 		output += "\n      resources: [\n],"; //no resource
 		output += "\n      units: [\n]";		//no unit
 		output += "\n    }"; 		

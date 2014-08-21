@@ -14,16 +14,37 @@
 jQuery(document).ready(function(){
 	
 	jQuery(function() {
-		jQuery("#dialog").dialog({
+		jQuery("#dialogAdd").dialog({
 			autoOpen: false
-		});
-		jQuery("#addCourse").on("click", function() {
-			jQuery("#dialog").dialog("open");
-			
-		});
-		jQuery("#dialog").bind("dialogclose", function(event)
+		});		
+		jQuery("#dialogEdit").dialog({
+			autoOpen: false
+		});		
+		//closing the dialog form should reset its fields
+		jQuery("#dialogAdd").bind("dialogclose", function(event)
 		{
 			$("addCourseForm").reset();
+		});
+		//adding the course
+		jQuery("#addCourse").on("click", function() {
+			jQuery("#dialogAdd").dialog( "option", "title", "Add Course" ); //set title
+			jQuery("#dialogAdd").dialog("open");			
+		});
+		//editing the course
+		jQuery("#editCourse").on("click", function() {			
+			//check if the course is selected
+			var c = state.curr.course;
+			if (c === null) return alert("Please select a course first. Add one if necessary.");
+			  if (!state.curr.course) return;
+			jQuery("#nameEdit").val(c.name);
+    		jQuery("#codeEdit").val(c.num);
+			jQuery("#descEdit").val((c.desc==="null"?"":c.desc));
+			jQuery("#domainEdit").val(c.domainId);
+			jQuery( "#visibleEdit" ).prop("checked",(c.visible == "1"));
+			jQuery("#dialogEdit").dialog( "option", "title", "Edit Course" ); //set title
+			//fill form fields with the selected course information
+			jQuery("#dialogEdit").dialog("open");
+			
 		});
 	});		
 });
@@ -549,11 +570,11 @@ function appStateSave() {
 
 function courseAdd() { 
 
-	var code = $("code").value;
-	var name = $("name").value;
-	var desc = $("desc").value;
-	var domain = $("domain").value;	
-	var visible = ($("visible").checked == true)? 1 : 0;
+	var code = $("codeAdd").value;
+	var name = $("nameAdd").value;
+	var desc = $("descAdd").value;
+	var domain = $("domainAdd").value;	
+	var visible = ($("visibleAdd").checked == true)? 1 : 0;
 	if( name ==='')
        {
 		 alert("Please fill the course name");
@@ -567,18 +588,12 @@ function courseAdd() {
     else 
 	{
     	$("addCourseForm").reset(); //reseting the form for next call
-    	var el = $("dialog");
-    	var parent = el.parentNode;    	
-//        $hide(el); //hiding the form
-//        $hide(parent); //hiding the div
-    	jQuery("#dialog").dialog("close");
+    	jQuery("#dialogAdd").dialog("close");
     	appSetReady(false);
     	name = encodeURIComponent(name);
     	code = encodeURIComponent(code);
     	domain = encodeURIComponent(domain);
     	desc = encodeURIComponent(desc);
-    	if (desc = '')
-    		desc = "NULL";
     	$call("GET", "CourseAdd?usr=" + state.usr.id+"&name=" + name + "&code=" + code+ 
     			"&desc=" + desc+ "&domain=" + domain+ "&visible="+visible, 
     			null, function (res) { courseAdd_cb(res); }, true, false);
@@ -664,8 +679,46 @@ function courseClone_cb(res) {
 
 // ----------------------------------------------------------------------------------------------------------
 function courseEdit() {
+	var code = $("code").value;
+	var name = $("name").value;
+	var desc = $("desc").value;
+	var domain = $("domain").value;	
+	var visible = ($("visible").checked == true)? 1 : 0;
+	if( name ==='')
+       {
+		 alert("Please fill the course name");
+		 e.preventDefault();
+       }
+	else if( code ==='')
+    {
+		 alert("Please fill the course code");
+		 e.preventDefault();
+    }
+    else 
+	{
+    	$("editCourseForm").reset(); //reseting the form for next call
+    	jQuery("#dialogEdit").dialog("close");
+    	appSetReady(false);
+    	name = encodeURIComponent(name);
+    	code = encodeURIComponent(code);
+    	domain = encodeURIComponent(domain);
+    	desc = encodeURIComponent(desc);
+    	$call("GET", "CourseEdit?usr=" + state.usr.id+"&name=" + name + "&code=" + code+ 
+    			"&desc=" + desc+ "&domain=" + domain+ "&visible="+visible, 
+    			null, function (res) { courseEdit_cb(res); }, true, false);
+    }	
 }
 
+function courseEdit_cb(res) {
+	if (!res || !res.outcome)
+	  return alert("An error has occured. Please try again.");
+//  else
+//  {
+//	  data.courses.push(res.course);	  
+//	  coursePopulateLst();	  
+//	  appSetReady(true);
+//  }
+}
 
 // ----------------------------------------------------------------------------------------------------------
 function courseGet(courseId) {
@@ -879,7 +932,7 @@ function resAdd01() {
   if ($lfold(function (a,b) { return a || (b.name === name); }, state.curr.course.resources, false)) return alert("A resource with that name already exists. No changes will be made.");
   
   appSetReady(false);
-  $call("GET", "ResAdd?usr=" + state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + $enc(name), null, function (res) { resAdd01_cb(res); }, true, false);
+  $call("GET", "ResAdd?usr=" + state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + $encodeURIComponent(name), null, function (res) { resAdd01_cb(res); }, true, false);
   //resAdd01_cb({ outcome: true, courseId: state.curr.course.id, res: { id: "" + (new Date()).getTime(), name: name } });
 }
 
@@ -1232,7 +1285,7 @@ function unitAdd() {
   if ($lfold(function (a,b) { return a || (b.name === name); }, state.curr.course.units, false)) return alert("A unit with that name already exists. No changes will be made.");
   
   appSetReady(false);
-  $call("GET", "UnitAdd?usr="+state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + $enc(name), null, function (res) { unitAdd_cb(res); }, true, false);
+  $call("GET", "UnitAdd?usr="+state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + $encodeURIComponent(name), null, function (res) { unitAdd_cb(res); }, true, false);
 //  unitAdd_cb({ outcome: true, courseId: state.curr.course.id, unit: { id: "" + (new Date()).getTime(), name: name } });
 }
 

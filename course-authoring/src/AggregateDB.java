@@ -120,9 +120,10 @@ public class AggregateDB extends dbInterface{
 			}
 			this.releaseStatement(stmt, rs);			
 			stmt = conn.createStatement();			
-			query = " select c.course_id,cr.affiliation_code, c.course_name, c.course_code, cr.creator_name,c.creation_date,c.domain,cr.creator_id"
+			query = " select c.course_id,cr.affiliation_code, c.course_name, c.course_code, cr.creator_name,c.creation_date,c.domain,cr.creator_id,c.desc,c.visible"
 							+ " from ent_course c, ent_creator cr"
-							+ " where c.creator_id = cr.creator_id;";
+							+ " where c.creator_id = cr.creator_id"
+							+ " order by c.domain asc, cr.affiliation_code asc, c.course_name asc;";
 			rs = stmt.executeQuery(query);	
 			int count=0,cid;
 			while(rs.next()){
@@ -141,6 +142,9 @@ public class AggregateDB extends dbInterface{
 					count = 0;
 				course.add(""+count);
 				course.add(rs.getString(8));
+				course.add(rs.getString(9)); //desc
+				course.add(rs.getString(10)); //visible
+
 				courseList.add(course);
 			}
 			this.releaseStatement(stmt,rs);
@@ -859,7 +863,7 @@ public class AggregateDB extends dbInterface{
 		ArrayList<String> courseList = new ArrayList<String>();
 		try{
 			stmt = conn.createStatement();
-			String query = " select c.course_id,cr.affiliation_code, c.course_name, c.course_code, cr.creator_name,c.creation_date,c.domain,cr.creator_id"
+			String query = " select c.course_id,cr.affiliation_code, c.course_name, c.course_code, cr.creator_name,c.creation_date,c.domain,cr.creator_id,c.desc,c.visible"
 							+ " from ent_course c, ent_creator cr"
 							+ " where c.creator_id = cr.creator_id and c.course_id = '"+newcid+"';";
 			rs = stmt.executeQuery(query);	
@@ -873,6 +877,8 @@ public class AggregateDB extends dbInterface{
 				courseList.add(rs.getString(7));
 				courseList.add("0"); // no group is assigned to the course right after cloning.
 				courseList.add(rs.getString(8));
+				courseList.add(rs.getString(9)); //desc
+				courseList.add(rs.getString(10)); //visible
 			}
 			this.releaseStatement(stmt,rs);
 		}catch (SQLException ex) {

@@ -71,8 +71,9 @@ public class GetData extends HttpServlet {
 		for (ArrayList<String> course : courseList)
 		{
 			output += "\n    {\n";
-			output += "      id: \""+course.get(0)+"\", institution: \""+course.get(1)+"\", name:\""+course.get(2)+"\", num:\""+course.get(3)+"\", created: { by: \""+course.get(4)+"\", on: \""+course.get(5)+"\" }, domainId: \""+course.get(6)+"\", groupCount: \""+course.get(7)+"\", isMy: "+(user.equals(course.get(8)))+",";
-			
+			output += "      id: \""+course.get(0)+"\", institution: \""+course.get(1)+"\", name:\""+course.get(2)+"\", num:\""+course.get(3)+
+			         "\", created: { by: \""+course.get(4)+"\", on: \""+course.get(5)+"\" }, domainId: \""+course.get(6)+
+			         "\", groupCount: \""+course.get(7)+"\", isMy: "+(user.equals(course.get(8)))+", desc: \""+course.get(9)+"\", visible: \""+course.get(10)+"\", ";			
 			//fetch all resources of the course
 			//each element of the resource is an ordered list of {id,name};
 			ArrayList<ArrayList<String>> resourceList = agg_db.getResource(course.get(0));

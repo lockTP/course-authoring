@@ -22,19 +22,34 @@
  </head>
 
 <body onload="appInit();">
- <div id="dialog" title = "Add Course">
+ <div id="dialogAdd" title = "">
   <form id="addCourseForm" action="" method="Get">
 	        	<label>Course Name:</label><br/>
-				<input type="text" id="name" name="name"><br/>				
+				<input type="text" id="nameAdd" name="nameAdd"><br/>				
 				<label>Course Code:</label><br/>
-				<input type="text" id="code" name="code"><br/>
+				<input type="text" id="codeAdd" name="codeAdd"><br/>
 				<label>Description:</label><br/>
-				<textarea id="desc" style="overflow-y:scroll;resize:none;height:70px" cols="50"></textarea><br/><br/>
-				<label>Domain:</label><select id = "domain" name="domain">
+				<textarea id="descAdd" style="overflow-y:scroll;resize:none;height:70px" cols="50"></textarea><br/><br/>
+				<label>Domain:</label><select id = "domainAdd" name="domainAdd">
 				   <option value="java">JAVA</option>
 				   <option value="sql">SQL</option>
-			    </select>&nbsp;&nbsp;<input type="checkbox" id = "visible" name="visible" checked="checked">Visible<br/><br/>
-			   <input type="button" id="save" value="Save" onclick="courseAdd();" style="float: right"/>
+			    </select>&nbsp;&nbsp;<input type="checkbox" id = "visibleAdd" name="visibleAdd" checked="checked">Visible<br/><br/>
+			   <input type="button" id="saveAdd" value="Save" onclick="courseAdd();" style="float: right"/>
+	</form>
+ </div>
+  <div id="dialogEdit" title = "">
+  <form id="editCourseForm" action="" method="Get">
+	        	<label>Course Name:</label><br/>
+				<input type="text" id="nameEdit" name="nameEdit"><br/>				
+				<label>Course Code:</label><br/>
+				<input type="text" id="codeEdit" name="codeEdit"><br/>
+				<label>Description:</label><br/>
+				<textarea id="descEdit" style="overflow-y:scroll;resize:none;height:70px" cols="50"></textarea><br/><br/>
+				<label>Domain:</label><select id = "domainEdit" name="domainEdit">
+				   <option value="java">JAVA</option>
+				   <option value="sql">SQL</option>
+			    </select>&nbsp;&nbsp;<input type="checkbox" id = "visibleEdit" name="visibleEdit" checked="checked">Visible<br/><br/>
+			   <input type="button" id="saveEdit" value="Save" onclick="courseEdit();" style="float: right"/>
 	</form>
  </div>
 <div id="loc-bar"></div>
@@ -54,7 +69,7 @@
       <td width="1" class="txt">Courses (<span id="course-cnt">0</span>)</td>
       <td width="*">&nbsp;</td>
       <td width="1" class="btn"><input type="button" id="addCourse" value="&#10010;"    title="Add new course" /></td>
-      <td width="1" class="btn"><input type="button" value="&#9998;"  onclick="courseEdit();"   title="Edit the selected course" /></td>
+      <td width="1" class="btn"><input type="button" id="editCourse" value="&#9998;"    title="Edit the selected course" /></td>
       <td width="1" class="btn"><input type="button" value="&#10005;" onclick="courseDelete();" title="Delete the selected course" /></td>
     </tr>
     </table>
