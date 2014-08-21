@@ -42,7 +42,6 @@ public class CourseAdd extends HttpServlet {
 		boolean outcome = (resid!=null);
 		String output = "{outcome: \""+outcome+"\", course: "+getJSON(agg_db,resid,usr)+"}";
 		agg_db.closeConnection();
-		System.out.println(output);
 		out.print(output);
 	}
 
@@ -50,8 +49,8 @@ public class CourseAdd extends HttpServlet {
 		ArrayList<String> course = agg_db.getCourse(newcid);
 		String output = "{\n";
 		output += "      id: \""+course.get(0)+"\", institution: \""+course.get(1)+"\", name:\""+course.get(2)+"\", num:\""+course.get(3)+"\", created: { by: \""+course.get(4)+"\", on: \""+course.get(5)+"\" }, domainId: \""+course.get(6)+"\", groupCount: \""+course.get(7)+"\", isMy: "+(usr.equals(course.get(8)))+",";
-		output += "\n      resources: [],"; //no resource
-		output += "\n      units: []";		//no unit
+		output += "\n      resources: [\n],"; //no resource
+		output += "\n      units: [\n]";		//no unit
 		output += "\n    }"; 		
 		return output;	
 	}

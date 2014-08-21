@@ -19,35 +19,13 @@ jQuery(document).ready(function(){
 		});
 		jQuery("#addCourse").on("click", function() {
 			jQuery("#dialog").dialog("open");
+			
 		});
-	});
-
-	//validating Form Fields.....
-	jQuery("#save").click(function(e){
-		
-
-	var code = jQuery("#code").val();
-	var name = jQuery("#name").val();
-	var desc = jQuery("#desc").val();
-	var domain = jQuery("#domain").val();	
-	var visible = jQuery("#visible").is(":checked") ? 1 : 0;
-	if( name ==='')
-       {
-		 alert("Please fill the course name");
-		 e.preventDefault();
-       }
-	else if( code ==='')
-    {
-		 alert("Please fill the course code");
-		 e.preventDefault();
-    }
-    else 
-	   {
-         courseAdd(code,name,desc,domain,visible);
-	   }
-	
-	});
-		
+		jQuery("#dialog").bind("dialogclose", function(event)
+		{
+			$("addCourseForm").reset();
+		});
+	});		
 });
 
 var CONST = {
@@ -569,20 +547,53 @@ function appStateSave() {
 // ---[  COURSES  ]------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------
 
-function courseAdd(code,name,desc,domain,visible) { 
-	$call("GET", "CourseAdd?usr=" + state.usr.id+"&name=" + $enc(name) + "&code=" + $enc(code)+ "&desc=" + $enc(desc)+ "&domain=" + $enc(domain)+ "&visible="+visible, null, function (res) { courseAdd_cb(res); }, true, false);
+function courseAdd() { 
+
+	var code = $("code").value;
+	var name = $("name").value;
+	var desc = $("desc").value;
+	var domain = $("domain").value;	
+	var visible = ($("visible").checked == true)? 1 : 0;
+	if( name ==='')
+       {
+		 alert("Please fill the course name");
+		 e.preventDefault();
+       }
+	else if( code ==='')
+    {
+		 alert("Please fill the course code");
+		 e.preventDefault();
+    }
+    else 
+	{
+    	$("addCourseForm").reset(); //reseting the form for next call
+    	var el = $("dialog");
+    	var parent = el.parentNode;    	
+//        $hide(el); //hiding the form
+//        $hide(parent); //hiding the div
+    	jQuery("#dialog").dialog("close");
+    	appSetReady(false);
+    	name = encodeURIComponent(name);
+    	code = encodeURIComponent(code);
+    	domain = encodeURIComponent(domain);
+    	desc = encodeURIComponent(desc);
+    	if (desc = '')
+    		desc = "NULL";
+    	$call("GET", "CourseAdd?usr=" + state.usr.id+"&name=" + name + "&code=" + code+ 
+    			"&desc=" + desc+ "&domain=" + domain+ "&visible="+visible, 
+    			null, function (res) { courseAdd_cb(res); }, true, false);
+    }	
 }
 
 
 // ----^----
 function courseAdd_cb(res) {
-  alert(res.outcome);
 	if (!res || !res.outcome)
 	  return alert("An error has occured. Please try again.");
   else
   {
 	  data.courses.push(res.course);	  
-	  coursePopulateLst(false);	  
+	  coursePopulateLst();	  
 	  appSetReady(true);
   }
 }
@@ -615,7 +626,7 @@ function courseDelete_cb(res) {
   
   appStateSave();
   
-  coursePopulateLst(false);
+  coursePopulateLst();
   
   appSetReady(true);
 }
@@ -645,7 +656,7 @@ function courseClone_cb(res) {
   
   data.courses.push(res.course);
   
-  coursePopulateLst(false);
+  coursePopulateLst();
   
   appSetReady(true);
 }
@@ -712,7 +723,6 @@ function coursePopulateLst() {
   var courseCnt = 0;
   for (var i=0, ni=data.courses.length; i < ni; i++) {
     var c = data.courses[i];
-    
     if (state.is.my && !c.isMy) continue;
     
     var tr = $$("tr", $("course-lst-cont"), "course-lst-item-" + c.id);
@@ -1237,7 +1247,7 @@ function unitAdd_cb(res) {
   $map(function (x) { u.activityIds[x.id] = [] }, c.resources);
   c.units.push(u);
   
-  coursePopulateLst(true);
+  coursePopulateLst();
 }
 
 
