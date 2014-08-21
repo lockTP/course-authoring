@@ -680,9 +680,8 @@ function courseGet(courseId) {
 // ----------------------------------------------------------------------------------------------------------
 function courseGetURL(courseId) {
 	if (state.curr.course === null) return alert("Please select a course first. Add one if necessary.");
-	alert("Below is the Mastery Grids URL for the currently selected course:\n\n" +
-  		"http://adapt2.sis.pitt.edu/um-vis-dev/index.html?usr=adl01&grp=ADL&sid=ZXFfI&ui-show-help=0&&cid="
-			+state.curr.course.id);
+	 window.open("http://adapt2.sis.pitt.edu/um-vis-dev/index.html?usr=adl01&grp=ADL&sid=ZXFfI&ui-show-help=0&&cid="
+				+state.curr.course.id);
 }
 
 
