@@ -38,9 +38,9 @@ public class CourseAdd extends HttpServlet {
 		ConfigManager cm = new ConfigManager(this);
 		AggregateDB agg_db = new AggregateDB(cm.agg_dbstring, cm.agg_dbuser, cm.agg_dbpass);
 		agg_db.openConnection();
-		Integer resid = agg_db.addCourse(name,code,desc,domain,visible,usr);
-		boolean outcome = (resid!=null);
-		String output = "{outcome: \""+outcome+"\", course: "+getJSON(agg_db,resid,usr)+"}";
+		Integer cid = agg_db.addCourse(name,code,desc,domain,visible,usr);
+		boolean outcome = (cid!=null);
+		String output = "{outcome: \""+outcome+"\", course: "+getJSON(agg_db,cid,usr)+"}";
 		agg_db.closeConnection();
 		out.print(output);
 	}

@@ -1015,4 +1015,26 @@ public class AggregateDB extends dbInterface{
 		}	
 			
 	}
+
+	public boolean editCourse(int cid, String name, String code, String desc,
+			String domain, String visible, String usr) {
+		try{
+			stmt = conn.createStatement();
+			String query = "update ent_course set course_name='"+name+"',`desc`='"+desc
+					       +"',course_code='"+code+"',domain='"+domain+"',visible='"+visible+"'" +
+					        " where course_id = '"+cid+"';";
+			stmt.executeUpdate(query);				
+			this.releaseStatement(stmt,rs);
+			return true;
+		}catch (SQLException ex) {
+			this.releaseStatement(stmt,rs);
+			ex.printStackTrace(); 
+			System.out.println("SQLException: " + ex.getMessage()); 
+			System.out.println("SQLState: " + ex.getSQLState()); 
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}finally{
+			this.releaseStatement(stmt,rs);
+		}	
+	}
 }

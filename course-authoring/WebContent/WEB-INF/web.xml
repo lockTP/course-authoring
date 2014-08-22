@@ -189,4 +189,14 @@
     <servlet-name>CourseAdd</servlet-name>
     <url-pattern>/CourseAdd</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CourseEdit</display-name>
+    <servlet-name>CourseEdit</servlet-name>
+    <servlet-class>CourseEdit</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CourseEdit</servlet-name>
+    <url-pattern>/CourseEdit</url-pattern>
+  </servlet-mapping>
 </web-app>

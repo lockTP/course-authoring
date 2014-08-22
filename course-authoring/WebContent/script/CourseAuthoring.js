@@ -679,11 +679,11 @@ function courseClone_cb(res) {
 
 // ----------------------------------------------------------------------------------------------------------
 function courseEdit() {
-	var code = $("code").value;
-	var name = $("name").value;
-	var desc = $("desc").value;
-	var domain = $("domain").value;	
-	var visible = ($("visible").checked == true)? 1 : 0;
+	var code = $("codeEdit").value;
+	var name = $("nameEdit").value;
+	var desc = $("descEdit").value;
+	var domain = $("domainEdit").value;	
+	var visible = ($("visibleEdit").checked == true)? 1 : 0;
 	if( name ==='')
        {
 		 alert("Please fill the course name");
@@ -698,13 +698,13 @@ function courseEdit() {
 	{
     	$("editCourseForm").reset(); //reseting the form for next call
     	jQuery("#dialogEdit").dialog("close");
-    	appSetReady(false);
     	name = encodeURIComponent(name);
     	code = encodeURIComponent(code);
     	domain = encodeURIComponent(domain);
     	desc = encodeURIComponent(desc);
+    	appSetReady(false);
     	$call("GET", "CourseEdit?usr=" + state.usr.id+"&name=" + name + "&code=" + code+ 
-    			"&desc=" + desc+ "&domain=" + domain+ "&visible="+visible, 
+    			"&desc=" + desc+ "&domain=" + domain+ "&visible="+visible+"&course_id="+state.curr.course.id, 
     			null, function (res) { courseEdit_cb(res); }, true, false);
     }	
 }
@@ -712,12 +712,16 @@ function courseEdit() {
 function courseEdit_cb(res) {
 	if (!res || !res.outcome)
 	  return alert("An error has occured. Please try again.");
-//  else
-//  {
-//	  data.courses.push(res.course);	  
-//	  coursePopulateLst();	  
-//	  appSetReady(true);
-//  }
+  else
+  {
+	  courseGet(res.course.id).name = res.course.name;
+	  courseGet(res.course.id).num = res.course.num;
+	  courseGet(res.course.id).desc = res.course.desc;
+	  courseGet(res.course.id).domainId = res.course.domainId;
+	  courseGet(res.course.id).visible = res.course.visible;
+	  coursePopulateLst();
+	  appSetReady(true);
+  }
 }
 
 // ----------------------------------------------------------------------------------------------------------
