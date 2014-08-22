@@ -936,7 +936,7 @@ function resAdd01() {
   if ($lfold(function (a,b) { return a || (b.name === name); }, state.curr.course.resources, false)) return alert("A resource with that name already exists. No changes will be made.");
   
   appSetReady(false);
-  $call("GET", "ResAdd?usr=" + state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + $encodeURIComponent(name), null, function (res) { resAdd01_cb(res); }, true, false);
+  $call("GET", "ResAdd?usr=" + state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + encodeURIComponent(name), null, function (res) { resAdd01_cb(res); }, true, false);
   //resAdd01_cb({ outcome: true, courseId: state.curr.course.id, res: { id: "" + (new Date()).getTime(), name: name } });
 }
 
@@ -1289,7 +1289,7 @@ function unitAdd() {
   if ($lfold(function (a,b) { return a || (b.name === name); }, state.curr.course.units, false)) return alert("A unit with that name already exists. No changes will be made.");
   
   appSetReady(false);
-  $call("GET", "UnitAdd?usr="+state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + $encodeURIComponent(name), null, function (res) { unitAdd_cb(res); }, true, false);
+  $call("GET", "UnitAdd?usr="+state.usr.id+"&course_id=" + state.curr.course.id + "&name=" + encodeURIComponent(name), null, function (res) { unitAdd_cb(res); }, true, false);
 //  unitAdd_cb({ outcome: true, courseId: state.curr.course.id, unit: { id: "" + (new Date()).getTime(), name: name } });
 }
 
