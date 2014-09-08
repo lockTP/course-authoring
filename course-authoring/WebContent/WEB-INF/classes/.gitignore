@@ -4,6 +4,7 @@
 /CourseAdd.class
 /CourseClone.class
 /CourseDelete.class
+/CourseEdit.class
 /GetData.class
 /ResAdd.class
 /ResDelete.class
@@ -16,7 +17,3 @@
 /UnitDelete.class
 /UnitEdit.class
 /UnitGetLst.class
-/UnitRemoveAct.class
-/UnitSetIdx.class
-/dbInterface.class
-/CourseEdit.class
