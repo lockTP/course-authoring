@@ -1,9 +1,3 @@
-/UnitDelete.class
-/UnitEdit.class
-/UnitGetLst.class
-/UnitRemoveAct.class
-/UnitSetIdx.class
-/dbInterface.class
 /ActSetIdx.class
 /AggregateDB.class
 /ConfigManager.class
@@ -20,3 +14,9 @@
 /ResSetIdx.class
 /UnitAdd.class
 /UnitAddAct.class
+/UnitDelete.class
+/UnitEdit.class
+/UnitGetLst.class
+/UnitRemoveAct.class
+/UnitSetIdx.class
+/dbInterface.class
