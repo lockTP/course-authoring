@@ -254,7 +254,7 @@ public class AggregateDB extends dbInterface{
 		HashMap<String,String> contentTags = getContentTags();
 		try{
 			stmt = conn.createStatement();
-			String query = "select content_id,provider_id,display_name,creator_id,url,domain from ent_content and visible = 1;";
+			String query = "select content_id,provider_id,display_name,creator_id,url,domain from ent_content where visible = 1;";
 			rs = stmt.executeQuery(query);	
 			while(rs.next()){
 				ArrayList<String> act = new ArrayList<String>();
