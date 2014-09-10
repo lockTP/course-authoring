@@ -79,12 +79,15 @@ public class AggregateDB extends dbInterface{
 		ArrayList<ArrayList<String>> providerList = new ArrayList<ArrayList<String>>();
 		try{
 			stmt = conn.createStatement();
-			String query = "select provider_id,name from ent_provider;";
+			String query = "select p.provider_id,p.name,pd.domain_name"
+							+ " from ent_provider p, rel_provider_domain pd"
+							+ " where p.provider_id = pd.provider_id;";
 			rs = stmt.executeQuery(query);	
 			while(rs.next()){
 				ArrayList<String> prov = new ArrayList<String>();
 				prov.add(rs.getString(1));
 				prov.add(rs.getString(2));
+				prov.add(rs.getString(3));
 				providerList.add(prov);
 			}
 			this.releaseStatement(stmt,rs);

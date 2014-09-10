@@ -896,17 +896,21 @@ function provPopulateLst(courseId, resId, doForce) {
   $("prov-lst-cont").innerHTML = "";
   for (var i=0, ni=data.providers.length; i < ni; i++) {
     var p = data.providers[i];
-    
-    //var td = $$("td", $$("tr", $("prov-lst-cont"), "prov-lst-item-" + p.id));
-    var span = $$("span", $("prov-lst-cont"), "prov-lst-item-" + p.id);
-    
-    var btn = $$("input", span, null, "prov-btn" + (r.providerIds.indexOf(p.id) === -1 ? "" : "-sel"));
-    btn.type  = "button";
-    btn.value = p.name;
-    
-    $$("span", span, null, null, (p.url && p.url.length > 0 ? "<a target=\"_blank\" href=\"" + p.url + "\" title=\"Open provider info page\">&#8594;</a>" : "")).width = "*";
-    
-    btn.onclick = function (provId, btn) { return function (e) { resProvToggle(provId, btn); } }(p.id, btn);
+    if (p.domainId == courseGet(courseId).domainId)
+    {
+    	
+    	 //var td = $$("td", $$("tr", $("prov-lst-cont"), "prov-lst-item-" + p.id));
+        var span = $$("span", $("prov-lst-cont"), "prov-lst-item-" + p.id);
+        
+        var btn = $$("input", span, null, "prov-btn" + (r.providerIds.indexOf(p.id) === -1 ? "" : "-sel"));
+        btn.type  = "button";
+        btn.value = p.name;
+        
+        $$("span", span, null, null, (p.url && p.url.length > 0 ? "<a target=\"_blank\" href=\"" + p.url + "\" title=\"Open provider info page\">&#8594;</a>" : "")).width = "*";
+        
+        btn.onclick = function (provId, btn) { return function (e) { resProvToggle(provId, btn); } }(p.id, btn);
+
+    }
   }
   
   // (2) Select providers based on the saved application state:

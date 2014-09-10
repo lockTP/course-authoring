@@ -183,7 +183,7 @@ public class GetData extends HttpServlet {
 		//each provider element is an ordered list containing {id,name}
 		for (ArrayList<String> prov : providerList) 
 		{
-			output += "    { id: \""+prov.get(0)+"\", name: \""+prov.get(1)+"\" },\n"; 
+			output += "    { id: \""+prov.get(0)+"\", name: \""+prov.get(1)+"\", domainId: \""+prov.get(2)+"\" },\n"; 
 		}
 		if (providerList.isEmpty() == false)
 			output = output.substring(0, output.length()-2); // this is for ignoring the last comma character in the domains list
