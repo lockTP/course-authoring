@@ -58,7 +58,7 @@ var CONST = {
 var state = {
   curr    : { course: null, unit: null, res01: null, res02: null, actUnit: null, actAvail: null },  // current
   filter  : { actName: "", actNameTimer: null },
-  is      : { initDone: false, loggedIn: false, my: true, ready: false },                           // flags
+  is      : { initDone: false, loggedIn: false, my: false, ready: false },                           // flags
   rt      : { stateLoadCourseCnt: 0, stateLoadUnitCnt: 0 },                                         // runtime
   usr     : { id: "admin" }
 };
@@ -480,15 +480,16 @@ function actToggleUnit_cbRemove(res) {
 // ----------------------------------------------------------------------------------------------------------
 
 function appInit() {
-  var h = $getHash(',', ':');
-  
-  state.is.my = !(h["my"] == 0);
-  (h["my"] == 0 ? $clsRem($("tbar-btn-my"), "sel") : $clsAdd($("tbar-btn-my"), "sel"));
-  
-  appSetReady(false);
-  
-  $call("GET", "GetData?usr=" + state.usr.id, null, function (res) { appInit_cb(res); }, true, false);
-  //appInit_cb({ outcome: true, data: data });
+	var h = $getHash(',', ':');
+	if (typeof h["my"] == 'undefined')
+		state.is.my = false;
+	else
+		state.is.my = !(h["my"] == 0);
+	(state.is.my == false ? $clsRem($("tbar-btn-my"), "sel") : $clsAdd($("tbar-btn-my"), "sel"));
+	appSetReady(false);
+
+	$call("GET", "GetData?usr=" + state.usr.id, null, function(res) { appInit_cb(res);}, true, false);
+	// appInit_cb({ outcome: true, data: data });
 }
 
 
@@ -1245,21 +1246,14 @@ function resSelect02(resId, doForce) {
   // Author:
   $removeChildren($("filter-act-author"));
   $$("option", $("filter-act-author"), null, null, "All");
-  
-
+ 
   var A = [];  // author IDs
-  var U = state.curr.course.units;
-  for (var i=0, ni=U.length; i < ni; i++) {
-	  if (U[i].activityIds[resId] == null)
+  var actList = data.activities;
+  for (var i=0, ni=actList.length; i < ni; i++) {	  
+	  if (actList[i].domain == state.curr.course.domainId)
 	  {
-		  U[i].activityIds[resId] = [];
-	  }
-		  for (var j=0, nj=U[i].activityIds[resId].length; j < nj; j++) {
-		      var act = actGet(U[i].activityIds[resId][j]);
-		      if (!act.authorId) continue;
-		      
-		      if (A.indexOf(act.authorId) === -1) A.push(act.authorId);
-		  }
+		  if (A.indexOf(actList[i].authorId) === -1) A.push(actList[i].authorId);
+	  }	 
    }
   
   for (var i=0, ni=A.length; i < ni; i++) {
