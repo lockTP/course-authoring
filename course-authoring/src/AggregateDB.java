@@ -346,7 +346,7 @@ public class AggregateDB extends dbInterface{
 	public Integer addRes(String cid, String name, String usr) {
 		Integer resid = null;
 		int neworder = gentMaxResOrder(cid)+1;
-		try{
+		try{			
 			stmt = conn.createStatement();
 			date = new Date();
 			String query = "insert into ent_resource (course_id,resource_name,display_name,`order`,creation_date,creator_id,visible)"
@@ -356,6 +356,21 @@ public class AggregateDB extends dbInterface{
 	        if (rs.next()){
 	            resid=rs.getInt(1);
 	        }
+			this.releaseStatement(stmt,rs);
+			//create the resource_name from the name
+			String[] nameParts = name.split(" ");
+			String genid = "";
+			String ch;
+			for (String np : nameParts)
+			{
+				ch = np.substring(0,1).toLowerCase();
+				if (ch.equals(" ") != false)
+					genid += ch;
+			}			
+			genid += resid;
+			stmt = conn.createStatement();				
+			query = "update ent_resource set resource_name='"+genid+"' where resource_id = '"+resid+"';";					
+			stmt.executeUpdate(query);				
 			this.releaseStatement(stmt,rs);
 			return resid;
 		}catch (SQLException ex) {

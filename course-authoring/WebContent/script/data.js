@@ -1,4 +1,4 @@
-var data = {
+ var data = {
   meta: {
     grp: "",
     usr: "admin"
@@ -23,7 +23,7 @@ var data = {
       ]
     },
     {
-      id: "1", institution: "PITT", name:"Introduction to Java Programming", num:"INFSCI 0017", created: { by: "Administrator", on: "2013-05-23 12:19:44.0" }, domainId: "java", groupCount: "15", isMy: true, desc: "null", visible: "1", 
+      id: "1", institution: "PITT", name:"Introduction to Java Programming", num:"INFSCI 0017", created: { by: "Administrator", on: "2013-05-23 12:19:44.0" }, domainId: "java", groupCount: "13", isMy: true, desc: "null", visible: "1", 
       resources: [
         { id: "1", name: "Quizzes",  providerIds: [ "quizjet"] },
         { id: "2", name: "Examples",  providerIds: [ "webex"] }
@@ -50,6 +50,37 @@ var data = {
         { id: "64", name: "Inheritance",  activityIds: { 2: ["247","248"], 1: ["338","339","340","341","342","343"] } },
         { id: "63", name: "Interfaces",  activityIds: { 2: ["245","246"], 1: ["333","334","335","336","337"] } },
         { id: "65", name: "Exceptions",  activityIds: { 2: ["466"], 1: ["344","345","346","347","348"] } }
+      ]
+    },
+    {
+      id: "17", institution: "PITT", name:"Introduction to Java Programming (Fall 2014-ae)", num:"INFSCI 0017", created: { by: "Administrator", on: "2014-09-11 11:50:18.0" }, domainId: "java", groupCount: "2", isMy: true, desc: "null", visible: "1", 
+      resources: [
+        { id: "32", name: "Quizzes",  providerIds: [ "quizjet"] },
+        { id: "33", name: "Examples",  providerIds: [ "webex"] },
+        { id: "34", name: "Animated Examples",  providerIds: [ "animatedexamples"] }
+      ],
+      units: [
+        { id: "196", name: "Variables",  activityIds: { 32: ["249","250","251","252","253"], 33: ["207","208","209","467","468"], 34: ["582","583","584"] } },
+        { id: "199", name: "Primitive_Data_Types",  activityIds: { 32: ["264","265","266","267","268","269"], 33: ["214","215"], 34: ["593"] } },
+        { id: "200", name: "Constants",  activityIds: { 32: ["270","271","349","350","351"], 33: ["216","217"] } },
+        { id: "201", name: "Arithmetic_Operations",  activityIds: { 32: ["272","273","274","275","276"], 33: ["218","219","220","221"], 34: ["594"] } },
+        { id: "202", name: "Strings",  activityIds: { 32: ["277","278","279","280","281","282"], 33: ["222","223","224","495"], 34: ["595"] } },
+        { id: "204", name: "Boolean_Expressions",  activityIds: { 32: ["288","289","290","291","292"], 33: ["229","230","231","463","464","494"], 34: ["599","598"] } },
+        { id: "203", name: "Decisions",  activityIds: { 32: ["283","284","285","286","287"], 33: ["225","226","227","228","469","470","471","472","473","474","465"], 34: ["597","596"] } },
+        { id: "205", name: "Switch",  activityIds: { 32: ["293","294","295"], 33: ["475","476","477","478","496"] } },
+        { id: "197", name: "Objects",  activityIds: { 32: ["254","255","256","257","258"], 33: ["210","211","213","212"], 34: ["585","586","587","588","589"] } },
+        { id: "198", name: "Classes",  activityIds: { 32: ["259","260","261","262","263"], 33: ["212"], 34: ["590","591","592"] } },
+        { id: "206", name: "Loops_while",  activityIds: { 32: ["296","297","298","299","300"], 33: ["232","479","480"], 34: ["600"] } },
+        { id: "208", name: "Loops_for",  activityIds: { 32: ["307","308","309","310","311"], 33: ["234","481","482","483","485","484","486","487"], 34: ["602"] } },
+        { id: "207", name: "Loops_do_while",  activityIds: { 32: ["301","302","303","304","305","306"], 33: ["233"], 34: ["601"] } },
+        { id: "209", name: "Nested_Loops",  activityIds: { 32: ["312","313","314"], 33: ["235","236","482","481"], 34: ["847"] } },
+        { id: "212", name: "Wrapper_Classes",  activityIds: { 32: ["323","324","325","332"], 33: ["242"] } },
+        { id: "210", name: "Arrays",  activityIds: { 32: ["315","316","317","318","319"], 33: ["237","238","239","490","488","491","493","492"], 34: ["848"] } },
+        { id: "213", name: "Two-dimensional_Arrays",  activityIds: { 32: ["326","327","328","329"], 33: ["243","244"], 34: ["852"] } },
+        { id: "211", name: "ArrayList",  activityIds: { 32: ["320","321","322","330","331"], 33: ["240","241","489"], 34: ["853","851","849","850","854"] } },
+        { id: "215", name: "Inheritance",  activityIds: { 32: ["338","339","340","341","342","343"], 33: ["247","248"], 34: ["855","856"] } },
+        { id: "214", name: "Interfaces",  activityIds: { 32: ["333","334","335","336","337"], 33: ["245","246"] } },
+        { id: "216", name: "Exceptions",  activityIds: { 32: ["344","345","346","347","348"], 33: ["466"] } }
       ]
     },
     {
@@ -133,14 +164,14 @@ var data = {
         { id: "182", name: "Loops_while",  activityIds: { 26: ["296","297","298","299"], 27: ["232","479"], 28: ["600"] } },
         { id: "183", name: "Loops_do_while",  activityIds: { 26: ["301","302","303","305","306"], 27: ["233"], 28: ["601"] } },
         { id: "184", name: "Loops_for",  activityIds: { 26: ["307","308","309"], 27: ["234","483","485","484","486","487"], 28: ["602"] } },
-        { id: "185", name: "Nested_Loops",  activityIds: { 26: ["312","313"], 27: ["235","236","482","481"] } },
-        { id: "173", name: "Objects",  activityIds: { 26: ["254","255","256"], 27: ["534","535","536","537"], 28: ["585","586","589","587","588"] } },
-        { id: "174", name: "Classes",  activityIds: { 26: ["259","260","261","262","263","543","565"], 27: ["212","211","538","539","566","541"], 28: ["591","592","590"] } },
-        { id: "186", name: "Arrays",  activityIds: { 26: ["315","316","317","318","319","545"], 27: ["237","238","239","490","488","491","493","544"] } },
-        { id: "189", name: "Two-dimensional_Arrays",  activityIds: { 26: ["326","327","328","329"], 27: ["243","244","492","549"] } },
-        { id: "187", name: "ArrayList",  activityIds: { 26: ["320","321","322","330","331"], 27: ["240","241","489","546","547","548"] } },
+        { id: "185", name: "Nested_Loops",  activityIds: { 26: ["312","313"], 27: ["235","236","482","481"], 28: ["847"] } },
+        { id: "173", name: "Objects",  activityIds: { 26: ["254","255","256"], 27: ["534","535","536","537"], 28: ["585","586","587","588","589"] } },
+        { id: "174", name: "Classes",  activityIds: { 26: ["259","260","261","262","263","543","565"], 27: ["212","211","538","539","566","541"], 28: ["590","591","592"] } },
+        { id: "186", name: "Arrays",  activityIds: { 26: ["315","316","317","318","319","545"], 27: ["237","238","239","490","488","491","493","544"], 28: ["848"] } },
+        { id: "189", name: "Two-dimensional_Arrays",  activityIds: { 26: ["326","327","328","329"], 27: ["243","244","492","549"], 28: ["852"] } },
+        { id: "187", name: "ArrayList",  activityIds: { 26: ["320","321","322","330","331"], 27: ["240","241","489","546","547","548"], 28: ["853","851","849","850","854"] } },
         { id: "188", name: "Wrapper_Classes",  activityIds: { 26: ["323","324","325","332"], 27: ["242"] } },
-        { id: "191", name: "Inheritance",  activityIds: { 26: ["338","339","340","341","342","343"], 27: ["248","502","497","499","498","500","501","550"] } },
+        { id: "191", name: "Inheritance",  activityIds: { 26: ["338","339","340","341","342","343"], 27: ["248","502","497","499","498","500","501","550"], 28: ["855","856"] } },
         { id: "190", name: "Interfaces",  activityIds: { 26: ["333","334","335","336","337"], 27: ["245","246","551","552","553"] } },
         { id: "192", name: "Exceptions",  activityIds: { 26: ["344","345","346","347","348"], 27: ["466"] } }
       ]
@@ -808,7 +839,17 @@ var data = {
     { id: "843", providerId: "webex", name: "IS12:: arrayio.c (119.1)", authorId: "admin", url: "http://adapt2.sis.pitt.edu/webex/Dissection2?act=arrayio.c&svc=progvis", domain: "c", tags: [] },
     { id: "844", providerId: "webex", name: "IS12:: arrayiofor.c (119.2)", authorId: "admin", url: "http://adapt2.sis.pitt.edu/webex/Dissection2?act=arrayiofor.c&svc=progvis", domain: "c", tags: [] },
     { id: "845", providerId: "webex", name: "IfElse_Structure", authorId: "admin", url: "http://adapt2.sis.pitt.edu/webex/Dissection2?act=IfElse_Structure&svc=progvis", domain: "c", tags: [] },
-    { id: "846", providerId: "webex", name: "private", authorId: "admin", url: "http://adapt2.sis.pitt.edu/webex/Dissection2?act=testprivate&svc=progvis", domain: "c", tags: [] }
+    { id: "846", providerId: "webex", name: "private", authorId: "admin", url: "http://adapt2.sis.pitt.edu/webex/Dissection2?act=testprivate&svc=progvis", domain: "c", tags: [] },
+    { id: "847", providerId: "animatedexamples", name: "Nested Loops", authorId: "admin", url: "https://greengoblin.cs.hut.fi/jsvee/animation?example-id=ae_nested_loops_v2", domain: "java", tags: [] },
+    { id: "848", providerId: "animatedexamples", name: "Using an Array2", authorId: "admin", url: "https://greengoblin.cs.hut.fi/jsvee/animation?example-id=ae_use_array_v2", domain: "java", tags: [] },
+    { id: "849", providerId: "animatedexamples", name: "For-Each", authorId: "admin", url: "https://greengoblin.cs.hut.fi/jsvee/animation?example-id=ae_JavaTutorial_4_7_5", domain: "java", tags: [] },
+    { id: "850", providerId: "animatedexamples", name: "For-each with break", authorId: "admin", url: "https://greengoblin.cs.hut.fi/jsvee/animation?example-id=ae_JavaTutorial_4_7_8", domain: "java", tags: [] },
+    { id: "851", providerId: "animatedexamples", name: "Enhanced For Loop Demo", authorId: "admin", url: "https://greengoblin.cs.hut.fi/jsvee/animation?example-id=ae_EnhancedForLoopDemo", domain: "java", tags: [] },
+    { id: "852", providerId: "animatedexamples", name: "Use 2D Array", authorId: "admin", url: "https://greengoblin.cs.hut.fi/jsvee/animation?example-id=ae_use_2darray_v2", domain: "java", tags: [] },
+    { id: "853", providerId: "animatedexamples", name: "ArrayList Demo", authorId: "admin", url: "https://greengoblin.cs.hut.fi/jsvee/animation?example-id=ae_arraylist2_v2", domain: "java", tags: [] },
+    { id: "854", providerId: "animatedexamples", name: "For-Each with ArrayList", authorId: "admin", url: "https://greengoblin.cs.hut.fi/jsvee/animation?example-id=ae_JavaTutorial_4_7_4", domain: "java", tags: [] },
+    { id: "855", providerId: "animatedexamples", name: "Simple Inheritance", authorId: "admin", url: "https://greengoblin.cs.hut.fi/jsvee/animation?example-id=ae_simple_inheritance_1", domain: "java", tags: [] },
+    { id: "856", providerId: "animatedexamples", name: "Polymorphism and Inheritance 2", authorId: "admin", url: "https://greengoblin.cs.hut.fi/jsvee/animation?example-id=ae_inheritance_polymorphism_1", domain: "java", tags: [] }
   ],
   providers: [
     { id: "animatedexamples", name: "AnimatedExamples", domainId: "java" },
