@@ -1250,9 +1250,13 @@ function resSelect02(resId, doForce) {
   var A = [];  // author IDs
   var actList = data.activities;
   for (var i=0, ni=actList.length; i < ni; i++) {	  
-	  if (actList[i].domain == state.curr.course.domainId)
+	  if (actList[i].domain == state.curr.course.domainId) //if author has contents in the domain of the course
 	  {
-		  if (A.indexOf(actList[i].authorId) === -1) A.push(actList[i].authorId);
+		  var ap = actList[i].providerId;
+		  if (state.curr.res02.providerIds.indexOf(ap) != -1)//if the provider of the content that author has created is the same as the provider for the current resource
+		  {
+			  if (A.indexOf(actList[i].authorId) === -1) A.push(actList[i].authorId); 
+		  }
 	  }	 
    }
   
