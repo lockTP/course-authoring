@@ -364,7 +364,7 @@ public class AggregateDB extends dbInterface{
 			for (String np : nameParts)
 			{
 				ch = np.substring(0,1).toLowerCase();
-				if (ch.equals(" ") != false)
+				if (ch.equals(" ") == false)
 					genid += ch;
 			}			
 			genid += resid;
