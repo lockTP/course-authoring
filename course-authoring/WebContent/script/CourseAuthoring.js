@@ -255,6 +255,11 @@ function actPopulateAvailLst(unitId, resId, doForce) {
     if (u.activityIds[resId].indexOf(a.id) !== -1 || P.indexOf(a.providerId) === -1) 
     	continue;
     }
+    else //if resource has no activity, available activities of same provider and author should be shown
+    {
+    	if (P.indexOf(a.providerId) === -1)
+    		continue;
+    }
     if (filterAuthorId !== null && a.authorId !== filterAuthorId) continue;
     
     if (filterName) {
@@ -365,7 +370,10 @@ function actSelect(actUnitId, actAvailId, doForce) {
 	  if (state.curr.unit.activityIds[state.curr.res02.id].indexOf(a.id) === -1) $clsRem($("act-det-btn"), "sel");  
 	  else $clsAdd($("act-det-btn"), "sel");
   }
-  
+  else //if resource has no activity
+  {
+	  $clsRem($("act-det-btn"), "sel");
+  }
   
   // (2.2) Provider:
   var prov = actGetProvider(a.providerId);
