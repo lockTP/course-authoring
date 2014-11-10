@@ -14,7 +14,7 @@ public class ConfigManager {
 	public String agg_dbuser;
 	public String agg_dbpass;
 
-	private static String config_string = "./WEB-INF/config.xml";
+	private static String config_string = "/WEB-INF/config.xml";
 	public ConfigManager(HttpServlet servlet){
 		try{
 			ServletContext context = servlet.getServletContext();
@@ -24,10 +24,11 @@ public class ConfigManager {
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 				Document doc = dBuilder.parse(input);
 				doc.getDocumentElement().normalize();
-
+				
 				agg_dbstring = doc.getElementsByTagName("agg_dbstring").item(0).getTextContent();
 				agg_dbuser = doc.getElementsByTagName("agg_dbuser").item(0).getTextContent();
-				agg_dbpass = doc.getElementsByTagName("agg_dbpass").item(0).getTextContent();	
+				agg_dbpass = doc.getElementsByTagName("agg_dbpass").item(0).getTextContent();
+								
 			}
 		}catch(Exception e){
 			e.printStackTrace();
