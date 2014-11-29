@@ -1,14 +1,141 @@
 <!DOCTYPE HTML>
-<html lang="en">
+<html>
 <head>
-<title>newType</title>
-
-<script src="script/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="js/ca.js"></script>
-
+<meta />
+<title>Course Authoring Layout</title>
+<!--<script type="text/javascript" src="demo.js"></script>-->
+<link rel="stylesheet" type="text/css" href="css/global.css"/>
+<link href="jqueryui/jquery-ui.css" rel="stylesheet">
 </head>
 <body>
-	<button type="button" id='test' disabled='disabled' >dd</button>
-	<button type="button" id='testdisplay' disabled='disabled' >display</button>
+<div class="wrap">
+	<div class="leftWrapper">
+		<div id="cContainer" class="wC">
+			<div class="title">Course Information</div>
+			<div class="aWrapper">
+				<div id="cInfo">
+				<div class="title1">Course Info</div>
+				<div id="courseInfo">
+				<table>
+				<tr><td>Category:</td><td>Java Programming</tr>
+				<tr><td>Campus:</td><td>Pitt</td></tr>
+				<tr><td>Code:</td><td>INFSCI 0017</td></tr>
+				<tr><td>Name:</td><td>Introduction to Java Programming</td></tr>
+				<tr><td>Group No:</td><td>11</td></tr>
+				<tr><td>Created By:</td><td>Administrator</td></tr>
+				</table>
+				</div>
+				<div class="funcWrapper" id="cFunction">
+					<ul class="functions ui-widget ui-helper-clearfix">
+						<li class="ui-state-default ui-corner-all" title="Edit this course"><span class="ui-icon ui-icon-pencil"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Clone this course"><span class="ui-icon ui-icon-copy"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Add a course"><span class="ui-icon ui-icon-plus"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Delete this course"><span class="ui-icon ui-icon-trash"></span></li>
+					</ul>
+				</div>
+				</div>
+				<div id="rList">
+					<div class="title1">Resources</div>
+					<div class="listWrapper">
+						<ol class="dragList" id="resources"></ol>
+					</div>
+					<div class="funcWrapper" id="rFunction">
+					<ul class="functions ui-widget ui-helper-clearfix">
+						<li class="ui-state-default ui-corner-all" title="Rename this resource"><span class="ui-icon ui-icon-pencil"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Add a new resource"><span class="ui-icon ui-icon-plus"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Delete this resource"><span class="ui-icon ui-icon-trash"></span></li>
+					</ul>
+				</div>
+				</div>
+				<div id="pList">
+					<div class="title1">Providers</div>
+					<div id="providers">
+						<input type="checkbox" id="check1">
+						<label for="check1">WebEx</label>
+						<input type="checkbox" id="check2">
+						<label for="check2">QuizeJet</label>
+						<input type="checkbox" id="check3">
+						<label for="check3">AnimatedExamples</label>
+					</div>
+				</div>
+			</div>
+			<div style="clear: both"></div>
+		</div>
+		<div id="aContainer" class="wC">
+			<div class="title">Units/Activity Information</div>
+			<div class="aWrapper">
+				<div id="uList">
+					<div class="title1">Units</div>
+					<div class="listWrapper">
+						<ol class="dragList" id="units"></ol>
+					</div>
+					<div class="funcWrapper" id="uFunction">
+					<ul class="functions ui-widget ui-helper-clearfix">
+						<li class="ui-state-default ui-corner-all" title="Edit this unit"><span class="ui-icon ui-icon-pencil"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Add a unit"><span class="ui-icon ui-icon-plus"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Delete this unit"><span class="ui-icon ui-icon-trash"></span></li>
+					</ul>
+					</div>
+				</div>
+				<div id="aList_Chosen">
+					<div class="title1">Unit Activities</div>
+					<div id="resTabs">
+						<ul>
+						<li><a href="#resTabs1">Examples</a></li>
+						<li><a href="#resTabs2">Code</a></li>
+						</ul>
+						<div class="listWrapper" id="resTabs1">
+							<ol class="dragList" id="examplesList">
+							<li>variables<span class="instant"></span></li>
+							</ol>
+						</div>
+						<div class="listWrapper" id="resTabs2">
+							<ol class="dragList" id="codeList">
+							<li>circular<span class="instant"></span></li>
+							</ol>
+						</div>
+					</div>
+					<div class="funcWrapper" id="aFunction">
+					<ul class="functions ui-widget ui-helper-clearfix">
+						<li class="ui-state-default ui-corner-all" title="Delete this activity"><span class="ui-icon ui-icon-trash"></span></li>
+					</ul>
+					</div>
+				</div>
+			</div>
+			<div style="clear: both"></div>
+		</div>
+	</div>
+	<div class="rightWrapper">
+		<div id="pContainer" class="wC">
+			<div class="title">Available Activities</div>
+			<div id="poolQuery">
+			    <label for="aAuthor">Author:</label>
+				<select id="aAuthor">
+					<option>Slower</option>
+					<option>Slow</option>
+					<option selected="selected">Medium</option>
+					<option>Fast</option>
+					<option>Faster</option>
+				</select><br><br>
+			    <label for="aNameQuery">Keywords:</label>
+				<input id="aNameQuery"></input><br><br>
+				<label for="aPool">Activities:</label>
+				<div class="listWrapper" id="aPool">
+					<ol class="dragOutList">
+					<li>circular</li>
+					<li>debug</li>
+					<li>circular</li>
+					<li>debug</li>
+					</ol>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+<script src="jqueryui/external/jquery/jquery.js"></script>
+<script src="jqueryui/jquery-ui.js"></script>
+<script src="script/slip.js"></script>
+<script src="script/ca.js"></script>
 </body>
 </html>
