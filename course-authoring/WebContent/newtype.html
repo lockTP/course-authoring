@@ -15,19 +15,11 @@
 			<div class="aWrapper">
 				<div id="cInfo">
 				<div class="title1">Course Info</div>
-				<div id="courseInfo">
-				<table>
-				<tr><td>Category:</td><td>Java Programming</tr>
-				<tr><td>Campus:</td><td>Pitt</td></tr>
-				<tr><td>Code:</td><td>INFSCI 0017</td></tr>
-				<tr><td>Name:</td><td>Introduction to Java Programming</td></tr>
-				<tr><td>Group No:</td><td>11</td></tr>
-				<tr><td>Created By:</td><td>Administrator</td></tr>
-				</table>
-				</div>
+				<div id="courseInfo"></div>
 				<div class="funcWrapper" id="cFunction">
 					<ul class="functions ui-widget ui-helper-clearfix">
-						<li class="ui-state-default ui-corner-all" title="Edit this course"><span class="ui-icon ui-icon-pencil"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Choose Another course"><span id="chooseCourse" class="ui-icon ui-icon-arrowreturnthick-1-w"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Edit this course"><span id="editCourse" class="ui-icon ui-icon-pencil"></span></li>
 						<li class="ui-state-default ui-corner-all" title="Clone this course"><span class="ui-icon ui-icon-copy"></span></li>
 						<li class="ui-state-default ui-corner-all" title="Add a course"><span class="ui-icon ui-icon-plus"></span></li>
 						<li class="ui-state-default ui-corner-all" title="Delete this course"><span class="ui-icon ui-icon-trash"></span></li>
@@ -46,17 +38,6 @@
 						<li class="ui-state-default ui-corner-all" title="Delete this resource"><span class="ui-icon ui-icon-trash"></span></li>
 					</ul>
 				</div>
-				</div>
-				<div id="pList">
-					<div class="title1">Providers</div>
-					<div id="providers">
-						<input type="checkbox" id="check1">
-						<label for="check1">WebEx</label>
-						<input type="checkbox" id="check2">
-						<label for="check2">QuizeJet</label>
-						<input type="checkbox" id="check3">
-						<label for="check3">AnimatedExamples</label>
-					</div>
 				</div>
 			</div>
 			<div style="clear: both"></div>
@@ -79,21 +60,8 @@
 				</div>
 				<div id="aList_Chosen">
 					<div class="title1">Unit Activities</div>
-					<div id="resTabs">
-						<ul>
-						<li><a href="#resTabs1">Examples</a></li>
-						<li><a href="#resTabs2">Code</a></li>
-						</ul>
-						<div class="listWrapper" id="resTabs1">
-							<ol class="dragList" id="examplesList">
-							<li>variables<span class="instant"></span></li>
-							</ol>
-						</div>
-						<div class="listWrapper" id="resTabs2">
-							<ol class="dragList" id="codeList">
-							<li>circular<span class="instant"></span></li>
-							</ol>
-						</div>
+					<div id="activities">
+						<ul></ul>
 					</div>
 					<div class="funcWrapper" id="aFunction">
 					<ul class="functions ui-widget ui-helper-clearfix">
@@ -109,29 +77,35 @@
 		<div id="pContainer" class="wC">
 			<div class="title">Available Activities</div>
 			<div id="poolQuery">
+				<label for="providers">Providers:</label>
+				<select id="providers"></select><br><br>
 			    <label for="aAuthor">Author:</label>
-				<select id="aAuthor">
-					<option>Slower</option>
-					<option>Slow</option>
-					<option selected="selected">Medium</option>
-					<option>Fast</option>
-					<option>Faster</option>
-				</select><br><br>
+				<select id="aAuthor"></select><br><br>
 			    <label for="aNameQuery">Keywords:</label>
 				<input id="aNameQuery"></input><br><br>
 				<label for="aPool">Activities:</label>
-				<div class="listWrapper" id="aPool">
-					<ol class="dragOutList">
+				<!-- <div class="listWrapper" id="aPool">-->
+					<ol class="dragOutList" id="pool">
+					<li>circular</li>
+					<li>debug</li>
+					<li>circular</li>
+					<li>debug</li>
 					<li>circular</li>
 					<li>debug</li>
 					<li>circular</li>
 					<li>debug</li>
 					</ol>
-				</div>
+				<!-- </div>-->
 			</div>
 
 		</div>
 	</div>
+</div>
+<div id="cListDialog" title="Choose a Course">
+<ol id="courses"></ol>
+</div>
+<div id="cEditDialog" class="ui-widget" title="Edit this Course">
+
 </div>
 <script src="jqueryui/external/jquery/jquery.js"></script>
 <script src="jqueryui/jquery-ui.js"></script>
