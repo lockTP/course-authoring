@@ -1,0 +1,239 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, p {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+	display: block;
+}
+
+html, body{
+	width: 100%;
+	height: 100%;
+	font-family: Verdana;
+	font-size: 11px;
+	background-color: white;
+}
+
+.wrap{
+	width: 1000px;
+	position: absolute;
+	left: 50%;
+	margin: 20px 0px 20px -500px;
+}
+
+.leftWrapper{
+	float: left;
+	width: 730px;
+	height: 100%;
+	margin-right: 10px;
+}
+
+.rightWrapper{
+	float: left;
+	width: 260px;
+	height: 100%;
+}
+
+.wC{
+	width: 100%;
+	margin-bottom: 10px;
+	padding-bottom: 5px;
+}
+
+.wC .title{
+	height: 27px;
+	background-color: #ddd;
+	line-height: 27px;
+	padding-left: 10px;
+	margin-bottom: 5px;
+	color: #666;
+}
+
+.title1{
+	text-align: center;
+	width: 100%;
+	line-height: 20px;
+	margin-bottom: 5px;
+	color: #bbb;
+}
+
+.aWrapper{
+	padding: 5px;
+}
+
+.aWrapper div{
+	float: left;
+	margin-right: 20px;
+}
+
+#cInfo{
+	width: 380px;
+}
+
+#courseInfo{
+	width: 100%;
+	height: 150px;
+}
+
+#rList{
+	width: 310px;
+	margin-right: 5px;
+}
+
+#rList .listWrapper{
+	height:150px;
+}
+
+#uList{
+	width: 290px;
+}
+
+#uList .listWrapper{
+	height: 363px;
+}
+
+#aList_Chosen{
+	width: 400px;
+	margin-right: 5px;
+}
+
+#activities{
+	width: 100%;
+}
+
+#activities div{
+	width: 90%;
+	height: 280px;
+	margin: 10px 0px 10px 0px;
+}
+
+#courses li {
+	width: 360px;
+	padding: 10px;
+}
+
+#courses li:hover{
+	cursor: pointer;
+	background-color: #0073ea;
+	color: white;
+}
+/*
+ * Function buttons
+ */
+
+.funcWrapper{
+	margin-top: 5px;
+}
+
+.functions li{
+	float:left;
+	padding: 4px;
+	margin:2px;
+}
+
+.functions li:hover{
+	cursor: pointer;
+}
+
+/*
+ * Drag items
+ */
+.listWrapper{
+	width: 100%;
+	float: none;
+	overflow-y: auto;
+	overflow-x: hidden;
+	border: 1px solid #ddd;
+}
+
+ol.dragList, ol.dragOutList{
+	width: 100%;
+}
+
+ol.dragOutList li, ol.dragList li{
+	border-bottom: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+	color: #0073ea;
+	padding: 10px 5px 10px 10px;
+	white-space: pre-line;
+	word-wrap: break-word;
+	word-break: break-all;
+	margin-top: -1px;
+}
+
+ol.dragOutList li:hover, ol.dragList li:hover{
+	background-color: #0073ea;
+	color: white;
+	cursor: pointer;
+}
+
+ol.dragOutList li.ui-selected , ol.dragList li.ui-selected {
+	color: #FF0084;
+	font-weight: bold;
+	background-color: #eee;
+}
+
+ol.dragList li .instant::after {
+    content: " \2261";
+    color: #666;
+    cursor: move;
+}
+
+ol.dragList li .instant {
+    float: right;
+    font-size: 14px;
+    padding: 5px;
+    margin-top: -8px;
+}
+
+/*
+ * Pool part
+ */
+
+#poolQuery{
+	padding: 10px;
+}
+
+#poolQuery label{
+	margin-bottom: 5px;
+}
+
+#aAuthor, #providers{
+	width: 240px;
+}
+
+#aNameQuery{
+	width: 220px;
+	height: 24px;
+	padding: 0px 10px 0px 10px;
+}
+
+
+#pool{
+	z-index: 1000;
+	height: 450px;
+	margin-top: 10px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+
+
+
+
+
+
+
+
+
