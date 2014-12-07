@@ -73,6 +73,19 @@ CA.actions = {
 			itemTargetIdx : '',
 		},
 		
+		//pointer resetter
+		resetP : function(){
+			this.pointer = {
+					//username and group info
+					usr : 'admin', grp : 'admins',
+					//currently operating course, activity, provider
+					cid : '', cIdx : '',
+					aid : '',
+					uid : '', uIdx : '',
+					rid : '', pid : '', itemTargetIdx : '',
+			};
+		},
+		
 		init : function(){
 			//get all data needed from the server (stupid and slow)
 			CA.request('GetData', {
@@ -132,7 +145,7 @@ CA.actions = {
 					}
 				}
 			}
-			//console.log(rList);
+			console.log(aList);
 			return aList;
 		},
 		
@@ -159,11 +172,72 @@ CA.actions = {
 			return pList;
 		},
 		
+		//gives out an activity list for display
+		getPool : function(){
+			var query = this.gather.activityQuery(),
+				whole = CA.wareHouse.activities,
+				len = whole.length,
+				rs = [],
+				i, a;
+			console.log('Now, pool list is searched by following query:')
+			console.log(query);
+			
+			for (i = 0; i < len; i++){
+				a = whole[i];
+				if(a.authorId == query.auid){
+					if(a.providerId == query.pid){
+						if(query.patt1.test(a.name) || query.patt2.test(a.name)){
+							rs.push(a);	
+						}
+					}
+				}
+			}
+			
+			return(rs);
+		},
+		
 		//object to gather form information
 		gather : {
 			courseEdit : function(){
-				var newData = {};
+				var newData = {},
+					dialog = $('#cEditDialog');
+				//get the name
+				newData.name = dialog.find('.cName').val().trim();
+				//get the code
+				newData.code = dialog.find('.cCode').val().trim();
+				//get the domain
+				newData.domain = dialog.find('.cDomain option:selected').prop('value');
+				//get the visible
+				var v = dialog.find('.cVisible').prop('checked');
+				newData.visible = v ? 1 : 0;
 				return newData;
+			},
+			
+			courseAdd : function(){
+				var newData = {},
+					dialog = $('#cAddDialog');
+				//get the name
+				newData.name = dialog.find('.cName').val().trim();
+				//get the code
+				newData.code = dialog.find('.cCode').val().trim();
+				//get the domain
+				newData.domain = dialog.find('.cDomain option:selected').prop('value');
+				//get the visible
+				var v = dialog.find('.cVisible').prop('checked');
+				newData.visible = v ? 1 : 0;
+				return newData;
+			},
+			
+			activityQuery : function(){
+				var query = {};
+				query.pid = $('#providers').find('option:selected').attr('pid');
+				query.auid = $('#aAuthor').find('option:selected').attr('auid');
+				
+				var keyword = $('#aNameQuery').val();
+				query.patt1 = new RegExp('^'+keyword, 'i');
+				query.patt2 = new RegExp(keyword, 'gi');
+				
+				return query; 
 			}
 		},
 		
@@ -223,66 +297,63 @@ CA.actions = {
 		},
 		
 		//CourseAdd()
-		CourseAdd : function(name, code, desc, domain, visible){
-			CA.request('CourseAdd', {
-				name : name,
-				code : code,
-				desc : desc,
-				domain : domain,
-				visible : visible,
-				usr : this.pointer.usr
-				});
+		CourseAdd : function(obj){
+			console.log(obj)
+			CA.request('CourseAdd',{name:obj.name, code:obj.code, desc:obj.desc, domain:obj.domain,
+				visible:obj.visible, usr:this.pointer.usr});
 		},
 		
-
 		//CourseClone()
 		CourseClone : function(name){
-			CA.request('CourseClone', {
-				course_id : this.pointer.cid,
-				name : name,
-				usr : this.pointer.usr
-				});
+			if(name == CA.wareHouse.courses[this.pointer.cIdx].name){
+				CA.view.infoMsg('Please use a different name.');
+			}else{
+				CA.request('CourseClone', {course_id:this.pointer.cid, name:name, usr:this.pointer.usr});
+			}
 		},
 
 		//CourseDelete()
-		CourseDelete : function(){
-			CA.request('CourseDelete',{
-				course_id : this.pointer.cid
-				});
+		CourseDelete : function(str){
+			if(str === 'DELETE'){
+				console.log('confirmed to delete');
+				CA.request('CourseDelete',{course_id:this.pointer.cid});
+			}else{
+				CA.view.infoMsg('Please check your type. [use UPPERCASE]');
+			}
 		},
 
 		//CourseEdit()
 		CourseEdit : function(obj){
 			console.log(obj);
-			//CA.request('CourseEdit',{course_id:this.pointer.cid, name:obj.name, code:obj.code,
-			//	desc:obj.desc, domain:obj.domain, visible:obj.visible, usr:this.pointer.usr});
+			CA.request('CourseEdit',{course_id:this.pointer.cid, name:obj.name, code:obj.code,
+				desc:obj.desc, domain:obj.domain, visible:obj.visible, usr:this.pointer.usr});
 		},
-
 
 		//ResAdd()
 		ResAdd : function(name){
-			CA.request('ResAdd',{
-				course_id : this.pointer.cid,
-				name : name,
-				usr : this.pointer.usr
-				});
+			var len = name.length;
+			if(len == 0 || len === 'undefined'){
+				CA.view.infoMsg('Please enter a name.');
+			}else{
+				CA.request('ResAdd',{course_id:this.pointer.cid, name:name,	usr:this.pointer.usr});
+			}
 		},
 
 		//ResDelete
-		ResDelete : function(){
-			CA.request('ResDelete',{
-				course_id : this.pointer.cid,
-				res_id : this.pointer.rid
-				});
+		ResDelete : function(str){
+			if(str === 'DELETE'){
+				console.log('confirmed to delete');
+				CA.request('ResDelete',{course_id:this.pointer.cid, res_id:this.pointer.rid});
+			}else{
+				CA.view.infoMsg('Please check your type. [use UPPERCASE]');
+			}
 		},
 
 		//ResEdit
 		ResEdit : function(name){
-			CA.request('ResEdit',{
-				name : name,
-				course_id : this.pointer.cid,
-				res_id : this.pointer.rid
-				});
+			console.log(CA.actions.pointer);
+			console.log('new name is: ' + name);
+			CA.request('ResEdit',{name:name, course_id:this.pointer.cid, res_id:this.pointer.rid});
 		},
 
 		//ResProvAdd
@@ -305,39 +376,49 @@ CA.actions = {
 
 		//UnitAdd
 		UnitAdd : function(name){
-			CA.request('UnitAdd',{
-				course_id : this.pointer.cid,
-				usr : this.pointer.usr,
-				name : name
-				});
+			var len = name.length;
+			if(len == 0 || len === 'undefined'){
+				CA.view.infoMsg('Please enter a name.');
+			}else{
+				CA.request('UnitAdd',{course_id:this.pointer.cid, usr:this.pointer.usr, name:name});
+			}
 		},
 
 		//UnitAddAct
 		UnitAddAct : function(){
+			console.log('\nAbout to add new activity to this unit, this is the pointer now');
+			console.log(this.pointer);
+			
 			CA.request('UnitAddAct',{
 				usr : this.pointer.usr,
 				course_id : this.pointer.cid,
 				unit_id : this.pointer.uid,
 				res_id : this.pointer.rid,
 				act_id : this.pointer.aid
-				});
+			});
 		},
 
 		//UnitDelete
-		UnitDelete : function(){
-			CA.request('UnitDelete',{
-				course_id : this.pointer.cid,
-				unit_id : this.pointer.uid
-				});
+		UnitDelete : function(str){
+			if(str === 'DELETE'){
+				console.log('confirmed to delete');
+				CA.request('UnitDelete',{course_id:this.pointer.cid, unit_id:this.pointer.uid});
+			}else{
+				CA.view.infoMsg('Please check your type. [use UPPERCASE]');
+			}
 		},
 
 		//UnitEdit
 		UnitEdit : function(name){
-			CA.request('UnitEdit',{
-				name : name,
-				course_id : this.pointer.cid,
-				unit_id : this.pointer.uid
-				});
+			console.log(CA.actions.pointer);
+			console.log('new name is: ' + name);
+			
+			var len = name.length;
+			if(len == 0 || len === 'undefined'){
+				CA.view.infoMsg('Please enter a name.');
+			}else{
+				CA.request('UnitEdit',{name:name, course_id:this.pointer.cid, unit_id:this.pointer.uid});
+			}
 		},
 
 		//UnitGetList
@@ -349,13 +430,19 @@ CA.actions = {
 		},
 
 		//UnitRemoveAct
-		UnitRemoveAct : function(){
-			CA.request('UnitRemoveAct',{
-				course_id : this.pointer.cid,
-				unit_id : this.pointer.uid,
-				res_id : this.pointer.rid,
-				act_id : this.pointer.aid
-				})
+		UnitRemoveAct : function(str){
+			if(str === 'DELETE'){
+				console.log('confirmed to delete, now the pointer is:');
+				console.log(CA.actions.pointer);
+				CA.request('UnitRemoveAct',{
+					course_id : this.pointer.cid,
+					unit_id : this.pointer.uid,
+					res_id : this.pointer.rid,
+					act_id : this.pointer.aid
+				});
+			}else{
+				CA.view.infoMsg('Please check your type. [use UPPERCASE]');
+			}
 		},
 };
 
@@ -469,12 +556,25 @@ CA.handlers = {
 		CourseAddHandler : function(rs){
 			newCourse = rs.course;
 			CA.wareHouse.courses.push(newCourse);
+			console.log('\nAdd completed. Here is the result:');
+			console.log(rs);
+			//close the dialog
+			$('#cAddDialog').dialog('close');
+			//remind the user course added
+			//CA.view.infoMsg('Course added. You may use the return button below to switch courses.');
+			//init
+			$("#cListDialog").dialog("close");
+			CA.view.initDisplay();
 		},
 
 		//CourseClone receive handler
 		CourseCloneHandler : function(rs){
 			newCourse = rs.course;
 			CA.wareHouse.courses.push(newCourse);
+			//close the clone dialog
+			$('#cCloDialog').dialog('close');
+			//remind the user it is cloned
+			CA.view.infoMsg('Course cloned.');
 		},
 		
 		//CourseDelete receive handler
@@ -482,17 +582,37 @@ CA.handlers = {
 			for(i = 0; i < CA.wareHouse.courses.length; i++){
 				if(CA.wareHouse.courses[i].id == rs.courseId){
 					CA.wareHouse.courses.splice(i,1);
+					break;
 				}
 			}
+			console.log('\nDeletion completed. Here is the result:');
+			console.log(CA.wareHouse.courses);
+			//close the dialog
+			$('#cDelDialog').dialog('close');
+			//reset the pointer
+			CA.actions.resetP();
+			CA.view.initDisplay();
+			//remind the user the course is deleted
+			CA.view.infoMsg('Course deleted.');
 		},
 		
 		//CourseEdit receive handler
 		CourseEditHandler : function(rs){
+			//add a new row to the course list
 			for(i = 0; i < CA.wareHouse.courses.length; i++){
 				if(CA.wareHouse.courses[i].id == rs.course.id){
 					CA.wareHouse.courses[i] = rs.course;
+					break;
 				}
 			}
+			console.log('\nEdit completed. Here is the result:');
+			console.log(CA.wareHouse.courses[CA.actions.pointer.cIdx]);
+			//update courseInfo
+			CA.view.cInfoRefresh(CA.actions.pointer.cIdx);
+			//close the dialog
+			$('#cEditDialog').dialog('close');
+			//remind the user it is edited
+			CA.view.infoMsg('Course info updated.');
 		},
 
 		//ResAdd receive handler
@@ -501,26 +621,51 @@ CA.handlers = {
 				if(CA.wareHouse.courses[i].id == rs.courseId){
 					rs.res.providerIds = [];
 					CA.wareHouse.courses[i].resources.push(rs.res);
+					break;
 				}
 			}
+			console.log('\nAdd completed. Here is the result:');
+			console.log(rs);
+			console.log(CA.wareHouse.courses[CA.actions.pointer.cIdx].resources);
+			//close the dialog
+			$('#rAddDialog').dialog('close');
+			//add one to the rlist
+			CA.view.dragListRender.addItem('resources', rs.res.name);
+			//uAndA empty
+			CA.view.uaEmpty();
+			//remind the user it is added
+			CA.view.infoMsg('Resource added to the last. And the unit\'s activity list has been refreshed.');
 		},
 		
 		//ResDelete receive handler
 		ResDeleteHandler : function(rs){
+			console.log('yes');
 			for(i = 0; i < CA.wareHouse.courses.length; i++){
 				if(CA.wareHouse.courses[i].id == rs.courseId){
 					for(j = 0; j < CA.wareHouse.courses[i].resources.length; j++){
 						if(CA.wareHouse.courses[i].resources[j].id == rs.resId){
 							CA.wareHouse.courses[i].resources.splice(j,1);
-							return;
+							break;
 						}
 					}
+					break;
 				}
 			}
+			console.log('\nDeletion completed. Here is the result:');
+			console.log(rs);
+			//delete this resource in view
+			CA.view.itemDelete('resources', CA.view.getItemIndex('resources'));
+			//uAndA empty
+			CA.view.uaEmpty();
+			//close the dialog
+			$('#rDelDialog').dialog('close');
+			//remind the user it is edited
+			CA.view.infoMsg('Resource deleted. And the unit\'s activity list has been refreshed.');
 		},
 		
 		//ResEdit receive handler
 		ResEditHandler : function(rs){
+			//modify the info in wareHouse
 			for(i = 0; i < CA.wareHouse.courses.length; i++){
 				if(CA.wareHouse.courses[i].id == rs.courseId){
 					for(j = 0; j < CA.wareHouse.courses[i].resources.length; j++){
@@ -529,11 +674,22 @@ CA.handlers = {
 							newrs.id = rs.resId;
 							newrs.name = rs.name;
 							CA.wareHouse.courses[i].resources[j] = newrs;
-							return;
+							break;
 						}
 					}
+					break;
 				}
 			}
+			console.log('\nEdit completed. Here is the result:');
+			console.log(CA.wareHouse.courses[CA.actions.pointer.cIdx].resources[CA.view.getItemIndex('resources')]);
+			//update the resource name in view
+			CA.view.itemRefresh('resources', CA.view.getItemIndex('resources'));
+			//uAndA empty
+			CA.view.uaEmpty();
+			//close the dialog
+			$('#rEditDialog').dialog('close');
+			//remind the user it is edited
+			CA.view.infoMsg('Resource info updated. And the unit\'s activity list has been refreshed.');
 		},
 
 		//ResProvAdd receive handler
@@ -573,15 +729,26 @@ CA.handlers = {
 			for(i = 0; i < CA.wareHouse.courses.length; i++){
 				if(CA.wareHouse.courses[i].id == rs.courseId){
 					rs.unit.activityIds = [];
-//					We don't need to create empty resources for activityIds. They can be generated when an activityId is added.
-//					var res = this.wareHouse.courses[i].resources;
-//					for(var j = 0; j < res.length; j++){
-//						rs.unit.activityIds[res[j].id] = [];
-//					}
+					var res = CA.wareHouse.courses[i].resources;
+					for(var j = 0; j < res.length; j++){
+						rs.unit.activityIds[res[j].id] = [];
+					}
 					CA.wareHouse.courses[i].units.push(rs.unit);
-					return;
+					break;
 				}
 			}
+			console.log('\nAdd completed. Here is the result:');
+			console.log(rs);
+			//close the dialog
+			$('#uAddDialog').dialog('close');
+			//add one to the rlist
+			CA.view.dragListRender.addItem('units', rs.unit.name);
+			//do the unit change bind;
+			$('#units').children().last().click(function(){
+				CA.view.actInit($(this).index());
+			});
+			//remind the user it is added
+			CA.view.infoMsg('New unit has been added to the last.');
 		},
 		
 		//UnitAddAct receive handler
@@ -594,11 +761,16 @@ CA.handlers = {
 								CA.wareHouse.courses[i].units[j].activityIds[rs.resId] = [];
 							}
 							CA.wareHouse.courses[i].units[j].activityIds[rs.resId].push(rs.actId);
-							return;
+							break;
 						}
 					}
+					break;
 				}
 			}
+			console.log('\nActivity added, here is the result:');
+			console.log(rs);
+			//add the new item in to the list
+			CA.view.aNewActivity(rs.resId, rs.actId);
 		},
 
 		//UnitDelete receive handler
@@ -608,11 +780,22 @@ CA.handlers = {
 					for(j = 0; j < CA.wareHouse.courses[i].units.length; j++){
 						if(CA.wareHouse.courses[i].units[j].id == rs.unitId){
 							CA.wareHouse.courses[i].units.splice(j,1);
-							return;
+							break;
 						}
 					}
+					break;
 				}
 			}
+			console.log('\nDeletion completed. Here is the result:');
+			console.log(rs);
+			//delete this unit in view
+			CA.view.itemDelete('units', CA.view.getItemIndex('units'));
+			//uAndA empty
+			CA.view.uaEmpty();
+			//close the dialog
+			$('#uDelDialog').dialog('close');
+			//remind the user it is edited
+			CA.view.infoMsg('Unit deleted. And the unit list has been refreshed.');
 		},
 		
 		//UnitEdit receive handler
@@ -624,11 +807,20 @@ CA.handlers = {
 							var newUnit = CA.wareHouse.courses[i].units[j];
 							newUnit.name = rs.name;
 							CA.wareHouse.courses[i].units[j] = newUnit;
-							return;
+							break;
 						}
 					}
+					break;
 				}
 			}
+			console.log('\nEdit completed. Here is the result:');
+			console.log(CA.wareHouse.courses[CA.actions.pointer.cIdx].units[CA.view.getItemIndex('units')]);
+			//update the resource name in view
+			CA.view.itemRefresh('units', CA.view.getItemIndex('units'));
+			//close the dialog
+			$('#uEditDialog').dialog('close');
+			//remind the user it is edited
+			CA.view.infoMsg('Unit info updated.');
 		},
 
 		//UnitGetList receive handler
@@ -643,15 +835,29 @@ CA.handlers = {
 				if(CA.wareHouse.courses[i].id == rs.courseId){
 					for(j = 0; j < CA.wareHouse.courses[i].units.length; j++){
 						if(CA.wareHouse.courses[i].units[j].id == rs.unitId){
-							for(k = 0; k < CA.wareHouse.courses[i].units[j].activityIds[rs.resId].length; k++)
+							for(k = 0; k < CA.wareHouse.courses[i].units[j].activityIds[rs.resId].length; k++){
 								if(CA.wareHouse.courses[i].units[j].activityIds[rs.resId][k] = rs.act_id){
 									CA.wareHouse.courses[i].units[j].activityIds[rs.resId].splice(k,1);
-									return;
+									break;
 								}
+							}
+							break;
 						}
 					}
+					break;
 				}
 			}
+			console.log('\nDeletion completed. Here is the result:');
+			console.log(rs);
+			//delete this unit in view
+			var listName = $('#activities div:visible ol').attr('id'),
+				idx = CA.view.getItemIndex(listName);
+			
+			CA.view.itemDelete(listName, idx);
+			//close the dialog
+			$('#aDelDialog').dialog('close');
+			//remind the user it is edited
+			CA.view.infoMsg('Activity deleted.');
 		},
 };
 
@@ -680,6 +886,20 @@ CA.view = {
 			});
 		},
 		
+		//this is the function that returns one selected item's index value in a certain list
+		getItemIndex :  function(listName){
+			var list = $('#'+listName), i;
+			i = list.find('.ui-selected').index();
+			return i;
+		},
+		
+		//this funcions calls up an alert window
+		infoMsg : function(str){
+			var icon = '<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>';
+			$('#infoSign').find('.infoMsg').html(icon+str);
+			$('#infoSign').dialog('open');
+		},
+		
 		//be called when change to another course
 		cSwitch : function(cid, cIdx){
 			//change the curr course no
@@ -691,8 +911,33 @@ CA.view = {
 			this.pageInitialize(cIdx);
 		},
 		
+		//function to start to load a page
 		pageInitialize : function(cIdx){
 			//display course info
+			this.cInfoRefresh(cIdx);
+			//resources and units
+			this.uaEmpty();
+			this.dragListRender.pageInit();
+			//providers and authors
+			this.provInit();
+			this.authorInit();
+			//bind events
+			$("#providers").selectmenu({select: function(event, ui){
+				CA.view.poolRefresh();
+			}}).selectmenu('refresh');
+			$("#aAuthor").selectmenu({select: function(event, ui){
+				CA.view.poolRefresh();
+			}}).selectmenu('refresh');
+			//console.log(CA.actions.pointer);
+			//pool refresh
+			this.poolRefresh();
+			//search bar
+			$('#aNameQuery').keyup(function(){
+				CA.view.poolRefresh();
+			});
+		},
+		
+		cInfoRefresh : function(cIdx){
 			$('#courseInfo').children().remove();
 			var cInfo = CA.wareHouse.courses[cIdx];
 			var domains = CA.actions.getDomains();
@@ -703,15 +948,6 @@ CA.view = {
 				"<tr><td>Group No:</td><td>" + cInfo.groupCount + "</td></tr>" +
 				"<tr><td>Created By:</td><td>" + cInfo.created.by + " on " + cInfo.created.on  + "</td></tr></table>";
 			$('#courseInfo').append(formatted);
-			//resources and units
-			this.dragListRender.pageInit();
-			//providers and authors
-			this.provInit();
-			this.authorInit();
-			//bind events
-			$("#providers").selectmenu().selectmenu('refresh');
-			$("#aAuthor").selectmenu().selectmenu('refresh');
-			console.log(CA.actions.pointer);
 		},
 		
 		//refresh the list in DOM, make it consistant with ones in warehouse
@@ -720,12 +956,36 @@ CA.view = {
 			$('#courses li').remove();
 			var clist = CA.wareHouse.courses;
 			for(var i = 0; i < clist.length; i++){
-				var li = '<li cid="'+clist[i].id+'">'+clist[i].num+' '+clist[i].name+'</li>';
+				var li = '<li cid="'+clist[i].id+'"><strong>['+clist[i].num+']</strong> '+clist[i].name+'</li>';
 				$('#courses').append(li);
 				//bind
 				$('#courses li').last().click(function(){
 					view.cSwitch($(this).attr('cid'), $(this).index());
 				});
+			}
+		},
+		
+		//this function refresh the pool list
+		poolRefresh : function(){
+			//clear the old ones
+			$('#pool li').remove();
+			
+			//get the list
+			var list = CA.actions.getPool();
+			console.log(list);
+			
+			for(var i = 0; i < list.length; i++){
+				var item = '<li aid="' + list[i].id + '">' + list[i].name + '<div class="link"><a href="' + list[i].url 
+				+ '" target="_blank">Preview</a></div></li>';
+				$('#pool').append(item);
+			    //bind the drag in from pool event
+			    $('#pool li').last().draggable({
+			    	revert: true,
+			    	helper: 'clone',
+			    	start: function(event, ui){
+			    		$(ui.helper).css('cursor', 'move');
+			    	}
+			    });
 			}
 		},
 		
@@ -754,9 +1014,36 @@ CA.view = {
 		//this is the function that add one provider to the list
 		addProv : function(provider){
 			var item = "";
-			item += '<option pid="' + provider.id + '">' + provider.id + '</option>' +
-				provider.name + '</label>';
+			item += '<option pid="' + provider.id + '">' + provider.name + '</option>';
 			$('#providers').append(item);
+		},
+		
+		//this function push one activity item into current activity list
+		aNewActivity : function(rid, aid){
+			var resources = CA.wareHouse.courses[CA.actions.pointer.cIdx].resources,
+				activities = CA.wareHouse.activities,
+				tarR, tarA;
+			for(var i = 0; i < resources.length; i++){
+				if(resources[i].id == rid){
+					tarR = resources[i];
+					break;
+				}
+			}
+			for(var j = 0; j < activities.length; j++){
+				if(activities[j].id == aid){
+					tarA = activities[j];
+					break;
+				}
+			}
+			
+			//format the listName
+			title = tarR.name.replace(/ /g, '');
+			var listName = tarR.id + '-' + title + 'List';
+			//format the item
+			var item = '<li>' + tarA.name + '<span class="instant"></span><span class="link"><a href="' + tarA.url 
+			+ '" target="_blank">Preview</a></span></li>';
+			console.log(listName, item);
+			$('#'+listName).append(item);
 		},
 		
 		//this is the initialize of the activity list
@@ -764,7 +1051,8 @@ CA.view = {
 			function formatActivity(tabName, obj){
 				str = '<ol class="dragList" id="'+tabName+'List">';
 				for(var i = 0; i < obj.length; i++){
-					str += '<li >' + obj[i].name + '<span class="instant"></span></li>';
+					str += '<li>' + obj[i].name + '<span class="instant"></span><span class="link"><a href="' + obj[i].url 
+					+ '" target="_blank">Preview</a></span></li>';
 				}
 				str += '</ol>';
 				return str;
@@ -801,20 +1089,54 @@ CA.view = {
 		    tab.tabs("refresh");
 			//bind the draglist in the tabs
 		    this.dragListRender.listBind(title+'List');
-		    //bind the drag in from pool event
-		    $('#pool li').draggable({
-		    	revert: true
-		    });
+		    //bind the drop place
 		    $('#'+id).droppable({
 		    	drop: function(event, ui){
 		    		CA.actions.pointer.aid = $('li.ui-draggable-dragging').attr('aid');
-		    		console.log($('li.ui-draggable-dragging').attr('aid'));
+		    		CA.actions.pointer.rid = title.split('-')[0];
+		    		CA.actions.UnitAddAct();
 		    	}
 		    });
 			//bind events for the items in tab lists
 		    $('#'+title+'List').children().click(function(){
 		    	$(this).addClass('ui-selected').siblings().removeClass('ui-selected');
 		    });
+		},
+		
+		//this is the function that refresh one item's name in a list
+		itemRefresh : function(listName, idx){
+			var course = CA.wareHouse.courses[CA.actions.pointer.cIdx];
+			switch(listName){
+				case 'resources':
+					var newHtml = course.resources[idx].name + '<span class="instant"></span>';
+					$('#resources').children().eq(idx).html(newHtml);
+					break;
+				case 'units':
+					var newHtml = course.units[idx].name + '<span class="instant"></span>';
+					$('#units').children().eq(idx).html(newHtml);
+					break;
+			}
+		},
+		
+		//this is the function that delete one item in a list
+		itemDelete : function(listName, idx){
+			var course = CA.wareHouse.courses[CA.actions.pointer.cIdx];
+			$('#' + listName).children().eq(idx).remove();
+		},
+		
+		//this is the function reset the units and activity part
+		uaEmpty : function(){
+			//clear the pointer
+			var p = CA.actions.pointer;
+			p.uIdx = "";
+			p.uid = "";
+			//remove the selected unit's highlight
+			$('#units li').removeClass('ui-selected');
+			//remove the tabs
+			var tab = $("#activities").tabs();
+			tab.find('.ui-tabs-nav li').remove();
+			$('#activities div').remove();
+			tab.tabs('refresh');
 		},
 		
 		//this part is for the drag's event bind
@@ -967,7 +1289,7 @@ CA.view = {
 				//console.log(this.fetchCurrArray(listName));
 			},
 		},
-}
+};
 
 
 /*
@@ -983,74 +1305,303 @@ $( ".functions li" ).hover(
 		$( this ).removeClass( "ui-state-hover" );
 	}
 );
+
+//Window Controls
+//info signs
+$( "#infoSign" ).dialog({
+    autoOpen: false,
+    modal: true,
+    width: 250,
+    buttons: {"OK" : function(){$(this).dialog( "close" );}},
+});
 //dialog divs
 //course choosing dialog
 $( "#cListDialog" ).dialog({
     autoOpen: false,
     modal: true,
     width: 400,
+    height: 400,
 });
 //course editing dialog
 $('#cEditDialog').dialog({
     autoOpen: false,
-    height: 300,
-    width: 350,
+    height: 320,
+    width: 200,
     modal: true,
     buttons: {
-      "Submit": CA.actions.CourseEdit(CA.actions.gather.courseEdit()),
-      Cancel: function() {dialog.dialog( "close" );}
+      "Submit": function(){
+    	  CA.actions.CourseEdit(CA.actions.gather.courseEdit());
+      },
+      Cancel: function(){$(this).dialog( "close" );}
     },
 });
+//course add dialog
+$('#cAddDialog').dialog({
+    autoOpen: false,
+    height: 320,
+    width: 200,
+    modal: true,
+    buttons: {
+      "Add": function(){
+    	  CA.actions.CourseAdd(CA.actions.gather.courseAdd());
+      },
+      Cancel: function(){$(this).dialog( "close" );}
+    },
+});
+//course del confirmation dialog
+$('#cDelDialog').dialog({
+    autoOpen: false,
+    height: 230,
+    width: 300,
+    modal: true,
+    buttons: {
+      "Delete": function(){CA.actions.CourseDelete($(this).find('.confirm').val());}
+    },
+});
+//course clone dialog
+$('#cCloDialog').dialog({
+    autoOpen: false,
+    width: 200,
+    modal: true,
+    buttons: {
+      "Clone": function(){CA.actions.CourseClone($(this).find('.cName').val().trim());}
+    },
+});
+//resource edit dialog
+$('#rEditDialog').dialog({
+    autoOpen: false,
+    width: 200,
+    modal: true,
+    buttons: {
+      "Submit": function(){CA.actions.ResEdit($(this).find('.rName').val().trim());}
+    },
+});
+//resource add dialog
+$('#rAddDialog').dialog({
+    autoOpen: false,
+    width: 200,
+    modal: true,
+    buttons: {"Add": function(){CA.actions.ResAdd($(this).find('.rName').val().trim());}},
+});
+//resource delete dialog
+$('#rDelDialog').dialog({
+    autoOpen: false,
+    height: 230,
+    width: 300,
+    modal: true,
+    buttons: {
+      "Delete": function(){CA.actions.ResDelete($(this).find('.confirm').val());}
+    },
+});
+//unit edit dialog
+$('#uEditDialog').dialog({
+    autoOpen: false,
+    width: 200,
+    modal: true,
+    buttons: {
+      "Submit": function(){CA.actions.UnitEdit($(this).find('.uName').val().trim());}
+    },
+});
+//unit add dialog
+$('#uAddDialog').dialog({
+    autoOpen: false,
+    width: 200,
+    modal: true,
+    buttons: {"Add": function(){CA.actions.UnitAdd($(this).find('.uName').val().trim());}},
+});
+//unit delete dialog
+$('#uDelDialog').dialog({
+    autoOpen: false,
+    height: 230,
+    width: 300,
+    modal: true,
+    buttons: {
+      "Delete": function(){CA.actions.UnitDelete($(this).find('.confirm').val());}
+    },
+});
+//unit delete dialog
+$('#aDelDialog').dialog({
+    autoOpen: false,
+    height: 230,
+    width: 300,
+    modal: true,
+    buttons: {
+      "Delete": function(){CA.actions.UnitRemoveAct($(this).find('.confirm').val());}
+    },
+});
+//Window Control Ends
 
-
+//Functions
 //course functions
 //choose other courses
 $('#chooseCourse').click(function(){
-	CA.actions.pointer = {
-			//username and group info
-			usr : 'admin', grp : 'admins',
-			//currently operating course, activity, provider
-			cid : '', cIdx : '',
-			aid : '',
-			uid : '', uIdx : '',
-			rid : '',
-			pid : '',
-			itemTargetIdx : '',
-	},
 	CA.view.initDisplay();
+	//reset the pointer
+	CA.actions.resetP();
 });
 //edit course
 $('#editCourse').click(function(){
+	//fill in the form in dialog
+	//add options to the selector
+	var dList = CA.actions.getDomains(),
+		thisCourse = CA.wareHouse.courses[CA.actions.pointer.cIdx];
+	//console.log(dList);
+	//empty the list
+	$('#cEditDialog .cDomain').find('option').remove();
+	//get this course's domain id
+	var domainId = thisCourse.domainId;
+	//insertion
+	for(domain in dList){
+		var option, selected = '';
+		if(domainId === domain){
+			selected = 'selected="selected"'
+		}
+		option = '<option '+selected+' value="'+domain+'">'+dList[domain]+'</option>';
+		$('#cEditDialog .cDomain').append(option);
+	}
+	//make check box right
+	if(thisCourse.visible === 1){
+		$('#cEditDialog .cVisible').prop('checked', 'true');
+	}else{
+		$('#cEditDialog .cVisible').prop('checked', 'false');
+	}
+	//fill in the name
+	$('#cEditDialog .cName').val(thisCourse.name);
+	//fill in the code
+	$('#cEditDialog .cCode').val(thisCourse.num);
+	//open the dialog
 	$('#cEditDialog').dialog('open');
 });
+//add course
+$('#addCourse, #addCourse1').click(function(){
+	//fill in the form in dialog
+	//add options to the selector
+	var dList = CA.actions.getDomains();
+	//empty the list
+	$('#cAddDialog .cDomain').find('option').remove();
+	//insertion
+	for(domain in dList){
+		option = '<option value="'+domain+'">'+dList[domain]+'</option>';
+		$('#cAddDialog .cDomain').append(option);
+	};
+	//open the dialog
+	$('#cAddDialog').dialog('open');
+});
+//delete course
+$('#delCourse').click(function(){
+	//empty the input
+	$('#cDelDialog .confirm').val('');
+	//open the dialog
+	$('#cDelDialog').dialog('open');
+});
+//clone course
+$('#cloCourse').click(function(){
+	//use this course's name as default
+	$('#cCloDialog .cName').val(CA.wareHouse.courses[CA.actions.pointer.cIdx].name);
+	//open the dialog
+	$('#cCloDialog').dialog('open');
+});
+//resource functions
+//edit resource
+$('#editResource').click(function(){
+	var i = CA.view.getItemIndex('resources');
+	if(i != -1){
+		//use this resource's name as default
+		$('#rEditDialog .rName').val(CA.wareHouse.courses[CA.actions.pointer.cIdx].resources[i].name);
+		//update the pointer
+		CA.actions.pointer.rid = CA.wareHouse.courses[CA.actions.pointer.cIdx].resources[i].id;
+		//open the dialog
+		$('#rEditDialog').dialog('open');		
+	}else{
+		CA.view.infoMsg('Please select one resource first.');
+	}
+});
+//edit resource
+$('#addResource').click(function(){
+	//clear the content
+	$('#rAddDialog').find('.rName').val('');
+	//open the dialog
+	$('#rAddDialog').dialog('open');
+});
+//delete resource
+$('#delResource').click(function(){
+	//empty the input
+	$('#rDelDialog .confirm').val('');
+	//fetch the index
+	var i = CA.view.getItemIndex('resources');
+	if(i != -1){
+		//update the pointer
+		CA.actions.pointer.rid = CA.wareHouse.courses[CA.actions.pointer.cIdx].resources[i].id;
+		//open the dialog
+		$('#rDelDialog').dialog('open');
+	}else{
+		CA.view.infoMsg('Please select one resource first.');
+	}
+});
+//unit functions
+//edit unit
+$('#editUnit').click(function(){
+	var i = CA.view.getItemIndex('units');
+	if(i != -1){
+		//use this unit's name as default
+		$('#uEditDialog .uName').val(CA.wareHouse.courses[CA.actions.pointer.cIdx].units[i].name);
+		//update the pointer
+		CA.actions.pointer.uid = CA.wareHouse.courses[CA.actions.pointer.cIdx].units[i].id;
+		//open the dialog
+		$('#uEditDialog').dialog('open');		
+	}else{
+		CA.view.infoMsg('Please select one unit first.');
+	}
+});
+//edit unit
+$('#addUnit').click(function(){
+	//clear the content
+	$('#uAddDialog').find('.uName').val('');
+	//open the dialog
+	$('#uAddDialog').dialog('open');
+});
+//delete resource
+$('#delUnit').click(function(){
+	//empty the input
+	$('#uDelDialog .confirm').val('');
+	//fetch the index
+	var i = CA.view.getItemIndex('units');
+	if(i != -1){
+		//update the pointer
+		CA.actions.pointer.uid = CA.wareHouse.courses[CA.actions.pointer.cIdx].units[i].id;
+		//open the dialog
+		$('#uDelDialog').dialog('open');
+	}else{
+		CA.view.infoMsg('Please select one unit first.');
+	}
+});
+//activity functions
+//delete activity
+$('#delAct').click(function(){
+	var listName = $('#activities div:visible').attr('id');
+	if(listName){
+		//update the pointer, rid
+		var rid = listName.split('-')[1],
+			idx = CA.view.getItemIndex(listName);
+		CA.actions.pointer.rid = rid;
+		if(idx != -1){
+			//update the pointer, aid
+			var aid = CA.wareHouse.courses[CA.actions.pointer.cIdx].units[CA.actions.pointer.uIdx].activityIds[rid][idx];
+			CA.actions.pointer.aid = aid;
+			//open dialog
+			$('#aDelDialog').dialog('open');
+		}else{
+			CA.view.infoMsg('Please select an activity first.');
+		}
+	}
+});
+//Functions Ends
 
 
 //-------------------------------------
 //test code
 //delete when it's done
 CA.actions.init();
-//function testFunc(){
-//	CA.CourseClone("testClone");
-//	CA.CourseAdd("testName","testCode","testDescription","JAVA","1");
-//	CA.CourseEdit("testNameEidt02","testCodeEdit","testDescriptionEdit","JAVA","1");
-//	CA.CourseDelete();
-//	CA.ResAdd("testResAdd");
-//	CA.ResDelete();
-//	CA.ResEdit("testResEdit04");
-//	CA.ResProvAdd();
-//	CA.ResProvRemove();
-//  CA.UnitAdd("unitAddTest");
-//	CA.UnitAddAct();
-//	CA.UnitDelete();
-//	CA.UnitEdit("testUnitEdit01");
-//	CA.UnitGetLst();
-//	CA.UnitRemoveAct();
-//	CA.UnitSetIdx();
-//}
-
-//CA.initDisplay();
 //test code ends
 //-------------------------------------
-
-
 

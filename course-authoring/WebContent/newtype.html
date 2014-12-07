@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta />
-<title>Course Authoring Layout</title>
+<title>Course Authoring</title>
 <!--<script type="text/javascript" src="demo.js"></script>-->
 <link rel="stylesheet" type="text/css" href="css/global.css"/>
 <link href="jqueryui/jquery-ui.css" rel="stylesheet">
@@ -20,9 +20,9 @@
 					<ul class="functions ui-widget ui-helper-clearfix">
 						<li class="ui-state-default ui-corner-all" title="Choose Another course"><span id="chooseCourse" class="ui-icon ui-icon-arrowreturnthick-1-w"></span></li>
 						<li class="ui-state-default ui-corner-all" title="Edit this course"><span id="editCourse" class="ui-icon ui-icon-pencil"></span></li>
-						<li class="ui-state-default ui-corner-all" title="Clone this course"><span class="ui-icon ui-icon-copy"></span></li>
-						<li class="ui-state-default ui-corner-all" title="Add a course"><span class="ui-icon ui-icon-plus"></span></li>
-						<li class="ui-state-default ui-corner-all" title="Delete this course"><span class="ui-icon ui-icon-trash"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Clone this course"><span id="cloCourse" class="ui-icon ui-icon-copy"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Add a course"><span id="addCourse" class="ui-icon ui-icon-plus"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Delete this course"><span id="delCourse" class="ui-icon ui-icon-trash"></span></li>
 					</ul>
 				</div>
 				</div>
@@ -33,9 +33,9 @@
 					</div>
 					<div class="funcWrapper" id="rFunction">
 					<ul class="functions ui-widget ui-helper-clearfix">
-						<li class="ui-state-default ui-corner-all" title="Rename this resource"><span class="ui-icon ui-icon-pencil"></span></li>
-						<li class="ui-state-default ui-corner-all" title="Add a new resource"><span class="ui-icon ui-icon-plus"></span></li>
-						<li class="ui-state-default ui-corner-all" title="Delete this resource"><span class="ui-icon ui-icon-trash"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Rename this resource"><span id="editResource" class="ui-icon ui-icon-pencil"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Add a new resource"><span id="addResource" class="ui-icon ui-icon-plus"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Delete this resource"><span id="delResource" class="ui-icon ui-icon-trash"></span></li>
 					</ul>
 				</div>
 				</div>
@@ -52,9 +52,9 @@
 					</div>
 					<div class="funcWrapper" id="uFunction">
 					<ul class="functions ui-widget ui-helper-clearfix">
-						<li class="ui-state-default ui-corner-all" title="Edit this unit"><span class="ui-icon ui-icon-pencil"></span></li>
-						<li class="ui-state-default ui-corner-all" title="Add a unit"><span class="ui-icon ui-icon-plus"></span></li>
-						<li class="ui-state-default ui-corner-all" title="Delete this unit"><span class="ui-icon ui-icon-trash"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Edit this unit"><span id="editUnit" class="ui-icon ui-icon-pencil"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Add a unit"><span id="addUnit" class="ui-icon ui-icon-plus"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Delete this unit"><span id="delUnit" class="ui-icon ui-icon-trash"></span></li>
 					</ul>
 					</div>
 				</div>
@@ -65,7 +65,7 @@
 					</div>
 					<div class="funcWrapper" id="aFunction">
 					<ul class="functions ui-widget ui-helper-clearfix">
-						<li class="ui-state-default ui-corner-all" title="Delete this activity"><span class="ui-icon ui-icon-trash"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Delete this activity"><span id="delAct" class="ui-icon ui-icon-trash"></span></li>
 					</ul>
 					</div>
 				</div>
@@ -85,31 +85,120 @@
 				<input id="aNameQuery"></input><br><br>
 				<label for="aPool">Activities:</label>
 				<!-- <div class="listWrapper" id="aPool">-->
-					<ol class="dragOutList" id="pool">
-					<li>circular</li>
-					<li>debug</li>
-					<li>circular</li>
-					<li>debug</li>
-					<li>circular</li>
-					<li>debug</li>
-					<li>circular</li>
-					<li>debug</li>
-					</ol>
+					<ol id="pool"></ol>
 				<!-- </div>-->
 			</div>
 
 		</div>
 	</div>
 </div>
+<!-- Dialogs -->
+<!-- courselist Dialog -->
 <div id="cListDialog" title="Choose a Course">
+<div style="padding-left: 8px; margin-bottom: 10px;"><ul class="functions ui-widget ui-helper-clearfix">
+<li class="ui-state-default ui-corner-all" title="Add a course"><span id="addCourse1" class="ui-icon ui-icon-plus"></span></li>
+</ul></div>
+<div style="padding: 0px 0px 5px 8px;"><strong>Course List:</strong></div>
 <ol id="courses"></ol>
 </div>
-<div id="cEditDialog" class="ui-widget" title="Edit this Course">
-
+<!-- courseEdit Dialog -->
+<div id="cEditDialog"  title="Edit this Course">
+	<!-- Name -->
+	<label>Course Name</label>
+	<input type="text" class="cName"/>
+	<!-- Code -->
+	<label>Course Code</label>
+	<input type="text" class="cCode"/>
+	<!-- Domain -->
+	<label>Domain</label>
+	<select class="cDomain"></select><br><br>
+	<!-- Visible -->
+	<input type="checkbox" class="cVisible"/>This course is visible
 </div>
+<!-- courseAdd Dialog -->
+<div id="cAddDialog" title="Add a new Course">
+	<!-- Name -->
+	<label>Course Name</label>
+	<input type="text" class="cName"/>
+	<!-- Code -->
+	<label>Course Code</label>
+	<input type="text" class="cCode"/>
+	<!-- Domain -->
+	<label>Domain</label>
+	<select class="cDomain"></select><br><br>
+	<!-- Visible -->
+	<input type="checkbox" class="cVisible"/>This course is visible
+</div>
+<!-- courseDel Dialog -->
+<div id="cDelDialog" title="Confirm to delete this course">
+	<!-- Name -->
+	<label>Do you really want to delete this course? The loss of this procedure is unable to recover.</label>
+	<label>Please type 'DELETE' (case sensitive) in the box below:</label>
+	<input type="text" class="confirm"/>
+</div>
+<!-- courseClo Dialog -->
+<div id="cCloDialog" title="Clone this course">
+	<!-- Name -->
+	<label>Please type the name of the new course:</label>
+	<input type="text" class="cName"/>
+</div>
+<!-- resourceEdit Dialog -->
+<div id="rEditDialog" title="Edit this resource">
+	<!-- Name -->
+	<label>Please type the new name of this resource:</label>
+	<input type="text" class="rName"/>
+</div>
+<!-- resourceAdd Dialog -->
+<div id="rAddDialog" title="Add a new resource">
+	<!-- Name -->
+	<label>Please type the name of the new resource:</label>
+	<input type="text" class="rName"/>
+</div>
+<!-- resourceDel Dialog -->
+<div id="rDelDialog" title="Confirm to delete this resource">
+	<!-- Name -->
+	<label>Do you really want to delete this resource? The loss of this procedure is unable to recover.</label>
+	<label>Please type 'DELETE' (case sensitive) in the box below:</label>
+	<input type="text" class="confirm"/>
+</div>
+<!-- unitEdit Dialog -->
+<div id="uEditDialog" title="Edit this unit">
+	<!-- Name -->
+	<label>Please type the new name of this unit:</label>
+	<input type="text" class="uName"/>
+</div>
+<!-- unitAdd Dialog -->
+<div id="uAddDialog" title="Add a new unit">
+	<!-- Name -->
+	<label>Please type the new name of this unit:</label>
+	<input type="text" class="uName"/>
+</div>
+<!-- unitDel Dialog -->
+<div id="uDelDialog" title="Confirm to delete this unit">
+	<!-- Name -->
+	<label>Do you really want to delete this unit? The loss of this procedure is unable to recover.</label>
+	<label>Please type 'DELETE' (case sensitive) in the box below:</label>
+	<input type="text" class="confirm"/>
+</div>
+<!-- unitDel Dialog -->
+<div id="aDelDialog" title="Confirm to delete this activity">
+	<!-- Name -->
+	<label>Do you really want to delete this activity? The loss of this procedure is unable to recover.</label>
+	<label>Please type 'DELETE' (case sensitive) in the box below:</label>
+	<input type="text" class="confirm"/>
+</div>
+<!-- Dialog ends -->
+<!-- Info Sign -->
+<div id="infoSign" title="Message:">
+	<div class='infoMsg'>
+	</div>
+</div>
+<!-- Info Sign ends -->
+<!-- Javascript -->
 <script src="jqueryui/external/jquery/jquery.js"></script>
 <script src="jqueryui/jquery-ui.js"></script>
 <script src="script/slip.js"></script>
 <script src="script/ca.js"></script>
+<!-- Javascript ends -->
 </body>
 </html>
