@@ -1,6 +1,8 @@
 /*
  * Course Authoring Javascript Controller
  * Author: Chi Zhang, Fei Han, Haoda Zou, Weichuan Hong
+ * Group 3
+ * INFSCI 2470 Final Project
  */
 
 /*
@@ -87,6 +89,8 @@ CA.actions = {
 		},
 		
 		init : function(){
+			//deploy
+			CA.deploy();
 			//get all data needed from the server (stupid and slow)
 			CA.request('GetData', {
 				usr : this.pointer.usr,
@@ -1297,311 +1301,314 @@ CA.view = {
  * Deploy Part
  * 
  */
-$( ".functions li" ).hover(
-	function() {
-		$( this ).addClass( "ui-state-hover" );
-	},
-	function() {
-		$( this ).removeClass( "ui-state-hover" );
-	}
-);
-
-//Window Controls
-//info signs
-$( "#infoSign" ).dialog({
-    autoOpen: false,
-    modal: true,
-    width: 250,
-    buttons: {"OK" : function(){$(this).dialog( "close" );}},
-});
-//dialog divs
-//course choosing dialog
-$( "#cListDialog" ).dialog({
-    autoOpen: false,
-    modal: true,
-    width: 400,
-    height: 400,
-});
-//course editing dialog
-$('#cEditDialog').dialog({
-    autoOpen: false,
-    height: 320,
-    width: 200,
-    modal: true,
-    buttons: {
-      "Submit": function(){
-    	  CA.actions.CourseEdit(CA.actions.gather.courseEdit());
-      },
-      Cancel: function(){$(this).dialog( "close" );}
-    },
-});
-//course add dialog
-$('#cAddDialog').dialog({
-    autoOpen: false,
-    height: 320,
-    width: 200,
-    modal: true,
-    buttons: {
-      "Add": function(){
-    	  CA.actions.CourseAdd(CA.actions.gather.courseAdd());
-      },
-      Cancel: function(){$(this).dialog( "close" );}
-    },
-});
-//course del confirmation dialog
-$('#cDelDialog').dialog({
-    autoOpen: false,
-    height: 230,
-    width: 300,
-    modal: true,
-    buttons: {
-      "Delete": function(){CA.actions.CourseDelete($(this).find('.confirm').val());}
-    },
-});
-//course clone dialog
-$('#cCloDialog').dialog({
-    autoOpen: false,
-    width: 200,
-    modal: true,
-    buttons: {
-      "Clone": function(){CA.actions.CourseClone($(this).find('.cName').val().trim());}
-    },
-});
-//resource edit dialog
-$('#rEditDialog').dialog({
-    autoOpen: false,
-    width: 200,
-    modal: true,
-    buttons: {
-      "Submit": function(){CA.actions.ResEdit($(this).find('.rName').val().trim());}
-    },
-});
-//resource add dialog
-$('#rAddDialog').dialog({
-    autoOpen: false,
-    width: 200,
-    modal: true,
-    buttons: {"Add": function(){CA.actions.ResAdd($(this).find('.rName').val().trim());}},
-});
-//resource delete dialog
-$('#rDelDialog').dialog({
-    autoOpen: false,
-    height: 230,
-    width: 300,
-    modal: true,
-    buttons: {
-      "Delete": function(){CA.actions.ResDelete($(this).find('.confirm').val());}
-    },
-});
-//unit edit dialog
-$('#uEditDialog').dialog({
-    autoOpen: false,
-    width: 200,
-    modal: true,
-    buttons: {
-      "Submit": function(){CA.actions.UnitEdit($(this).find('.uName').val().trim());}
-    },
-});
-//unit add dialog
-$('#uAddDialog').dialog({
-    autoOpen: false,
-    width: 200,
-    modal: true,
-    buttons: {"Add": function(){CA.actions.UnitAdd($(this).find('.uName').val().trim());}},
-});
-//unit delete dialog
-$('#uDelDialog').dialog({
-    autoOpen: false,
-    height: 230,
-    width: 300,
-    modal: true,
-    buttons: {
-      "Delete": function(){CA.actions.UnitDelete($(this).find('.confirm').val());}
-    },
-});
-//unit delete dialog
-$('#aDelDialog').dialog({
-    autoOpen: false,
-    height: 230,
-    width: 300,
-    modal: true,
-    buttons: {
-      "Delete": function(){CA.actions.UnitRemoveAct($(this).find('.confirm').val());}
-    },
-});
-//Window Control Ends
-
-//Functions
-//course functions
-//choose other courses
-$('#chooseCourse').click(function(){
-	CA.view.initDisplay();
-	//reset the pointer
-	CA.actions.resetP();
-});
-//edit course
-$('#editCourse').click(function(){
-	//fill in the form in dialog
-	//add options to the selector
-	var dList = CA.actions.getDomains(),
-		thisCourse = CA.wareHouse.courses[CA.actions.pointer.cIdx];
-	//console.log(dList);
-	//empty the list
-	$('#cEditDialog .cDomain').find('option').remove();
-	//get this course's domain id
-	var domainId = thisCourse.domainId;
-	//insertion
-	for(domain in dList){
-		var option, selected = '';
-		if(domainId === domain){
-			selected = 'selected="selected"'
+CA.nameSpace('deploy');
+CA.deploy = function(){
+	$( ".functions li" ).hover(
+		function() {
+			$( this ).addClass( "ui-state-hover" );
+		},
+		function() {
+			$( this ).removeClass( "ui-state-hover" );
 		}
-		option = '<option '+selected+' value="'+domain+'">'+dList[domain]+'</option>';
-		$('#cEditDialog .cDomain').append(option);
-	}
-	//make check box right
-	if(thisCourse.visible === 1){
-		$('#cEditDialog .cVisible').prop('checked', 'true');
-	}else{
-		$('#cEditDialog .cVisible').prop('checked', 'false');
-	}
-	//fill in the name
-	$('#cEditDialog .cName').val(thisCourse.name);
-	//fill in the code
-	$('#cEditDialog .cCode').val(thisCourse.num);
-	//open the dialog
-	$('#cEditDialog').dialog('open');
-});
-//add course
-$('#addCourse, #addCourse1').click(function(){
-	//fill in the form in dialog
-	//add options to the selector
-	var dList = CA.actions.getDomains();
-	//empty the list
-	$('#cAddDialog .cDomain').find('option').remove();
-	//insertion
-	for(domain in dList){
-		option = '<option value="'+domain+'">'+dList[domain]+'</option>';
-		$('#cAddDialog .cDomain').append(option);
-	};
-	//open the dialog
-	$('#cAddDialog').dialog('open');
-});
-//delete course
-$('#delCourse').click(function(){
-	//empty the input
-	$('#cDelDialog .confirm').val('');
-	//open the dialog
-	$('#cDelDialog').dialog('open');
-});
-//clone course
-$('#cloCourse').click(function(){
-	//use this course's name as default
-	$('#cCloDialog .cName').val(CA.wareHouse.courses[CA.actions.pointer.cIdx].name);
-	//open the dialog
-	$('#cCloDialog').dialog('open');
-});
-//resource functions
-//edit resource
-$('#editResource').click(function(){
-	var i = CA.view.getItemIndex('resources');
-	if(i != -1){
-		//use this resource's name as default
-		$('#rEditDialog .rName').val(CA.wareHouse.courses[CA.actions.pointer.cIdx].resources[i].name);
-		//update the pointer
-		CA.actions.pointer.rid = CA.wareHouse.courses[CA.actions.pointer.cIdx].resources[i].id;
-		//open the dialog
-		$('#rEditDialog').dialog('open');		
-	}else{
-		CA.view.infoMsg('Please select one resource first.');
-	}
-});
-//edit resource
-$('#addResource').click(function(){
-	//clear the content
-	$('#rAddDialog').find('.rName').val('');
-	//open the dialog
-	$('#rAddDialog').dialog('open');
-});
-//delete resource
-$('#delResource').click(function(){
-	//empty the input
-	$('#rDelDialog .confirm').val('');
-	//fetch the index
-	var i = CA.view.getItemIndex('resources');
-	if(i != -1){
-		//update the pointer
-		CA.actions.pointer.rid = CA.wareHouse.courses[CA.actions.pointer.cIdx].resources[i].id;
-		//open the dialog
-		$('#rDelDialog').dialog('open');
-	}else{
-		CA.view.infoMsg('Please select one resource first.');
-	}
-});
-//unit functions
-//edit unit
-$('#editUnit').click(function(){
-	var i = CA.view.getItemIndex('units');
-	if(i != -1){
-		//use this unit's name as default
-		$('#uEditDialog .uName').val(CA.wareHouse.courses[CA.actions.pointer.cIdx].units[i].name);
-		//update the pointer
-		CA.actions.pointer.uid = CA.wareHouse.courses[CA.actions.pointer.cIdx].units[i].id;
-		//open the dialog
-		$('#uEditDialog').dialog('open');		
-	}else{
-		CA.view.infoMsg('Please select one unit first.');
-	}
-});
-//edit unit
-$('#addUnit').click(function(){
-	//clear the content
-	$('#uAddDialog').find('.uName').val('');
-	//open the dialog
-	$('#uAddDialog').dialog('open');
-});
-//delete resource
-$('#delUnit').click(function(){
-	//empty the input
-	$('#uDelDialog .confirm').val('');
-	//fetch the index
-	var i = CA.view.getItemIndex('units');
-	if(i != -1){
-		//update the pointer
-		CA.actions.pointer.uid = CA.wareHouse.courses[CA.actions.pointer.cIdx].units[i].id;
-		//open the dialog
-		$('#uDelDialog').dialog('open');
-	}else{
-		CA.view.infoMsg('Please select one unit first.');
-	}
-});
-//activity functions
-//delete activity
-$('#delAct').click(function(){
-	var listName = $('#activities div:visible').attr('id');
-	if(listName){
-		//update the pointer, rid
-		var rid = listName.split('-')[1],
-			idx = CA.view.getItemIndex(listName);
-		CA.actions.pointer.rid = rid;
-		if(idx != -1){
-			//update the pointer, aid
-			var aid = CA.wareHouse.courses[CA.actions.pointer.cIdx].units[CA.actions.pointer.uIdx].activityIds[rid][idx];
-			CA.actions.pointer.aid = aid;
-			//open dialog
-			$('#aDelDialog').dialog('open');
+	);
+	
+	//Window Controls
+	//info signs
+	$( "#infoSign" ).dialog({
+	    autoOpen: false,
+	    modal: true,
+	    width: 250,
+	    buttons: {"OK" : function(){$(this).dialog( "close" );}},
+	});
+	//dialog divs
+	//course choosing dialog
+	$( "#cListDialog" ).dialog({
+	    autoOpen: false,
+	    modal: true,
+	    width: 400,
+	    height: 400,
+	});
+	//course editing dialog
+	$('#cEditDialog').dialog({
+	    autoOpen: false,
+	    height: 320,
+	    width: 200,
+	    modal: true,
+	    buttons: {
+	      "Submit": function(){
+	    	  CA.actions.CourseEdit(CA.actions.gather.courseEdit());
+	      },
+	      Cancel: function(){$(this).dialog( "close" );}
+	    },
+	});
+	//course add dialog
+	$('#cAddDialog').dialog({
+	    autoOpen: false,
+	    height: 320,
+	    width: 200,
+	    modal: true,
+	    buttons: {
+	      "Add": function(){
+	    	  CA.actions.CourseAdd(CA.actions.gather.courseAdd());
+	      },
+	      Cancel: function(){$(this).dialog( "close" );}
+	    },
+	});
+	//course del confirmation dialog
+	$('#cDelDialog').dialog({
+	    autoOpen: false,
+	    height: 230,
+	    width: 300,
+	    modal: true,
+	    buttons: {
+	      "Delete": function(){CA.actions.CourseDelete($(this).find('.confirm').val());}
+	    },
+	});
+	//course clone dialog
+	$('#cCloDialog').dialog({
+	    autoOpen: false,
+	    width: 200,
+	    modal: true,
+	    buttons: {
+	      "Clone": function(){CA.actions.CourseClone($(this).find('.cName').val().trim());}
+	    },
+	});
+	//resource edit dialog
+	$('#rEditDialog').dialog({
+	    autoOpen: false,
+	    width: 200,
+	    modal: true,
+	    buttons: {
+	      "Submit": function(){CA.actions.ResEdit($(this).find('.rName').val().trim());}
+	    },
+	});
+	//resource add dialog
+	$('#rAddDialog').dialog({
+	    autoOpen: false,
+	    width: 200,
+	    modal: true,
+	    buttons: {"Add": function(){CA.actions.ResAdd($(this).find('.rName').val().trim());}},
+	});
+	//resource delete dialog
+	$('#rDelDialog').dialog({
+	    autoOpen: false,
+	    height: 230,
+	    width: 300,
+	    modal: true,
+	    buttons: {
+	      "Delete": function(){CA.actions.ResDelete($(this).find('.confirm').val());}
+	    },
+	});
+	//unit edit dialog
+	$('#uEditDialog').dialog({
+	    autoOpen: false,
+	    width: 200,
+	    modal: true,
+	    buttons: {
+	      "Submit": function(){CA.actions.UnitEdit($(this).find('.uName').val().trim());}
+	    },
+	});
+	//unit add dialog
+	$('#uAddDialog').dialog({
+	    autoOpen: false,
+	    width: 200,
+	    modal: true,
+	    buttons: {"Add": function(){CA.actions.UnitAdd($(this).find('.uName').val().trim());}},
+	});
+	//unit delete dialog
+	$('#uDelDialog').dialog({
+	    autoOpen: false,
+	    height: 230,
+	    width: 300,
+	    modal: true,
+	    buttons: {
+	      "Delete": function(){CA.actions.UnitDelete($(this).find('.confirm').val());}
+	    },
+	});
+	//unit delete dialog
+	$('#aDelDialog').dialog({
+	    autoOpen: false,
+	    height: 230,
+	    width: 300,
+	    modal: true,
+	    buttons: {
+	      "Delete": function(){CA.actions.UnitRemoveAct($(this).find('.confirm').val());}
+	    },
+	});
+	//Window Control Ends
+	
+	//Functions
+	//course functions
+	//choose other courses
+	$('#chooseCourse').click(function(){
+		CA.view.initDisplay();
+		//reset the pointer
+		CA.actions.resetP();
+	});
+	//edit course
+	$('#editCourse').click(function(){
+		//fill in the form in dialog
+		//add options to the selector
+		var dList = CA.actions.getDomains(),
+			thisCourse = CA.wareHouse.courses[CA.actions.pointer.cIdx];
+		//console.log(dList);
+		//empty the list
+		$('#cEditDialog .cDomain').find('option').remove();
+		//get this course's domain id
+		var domainId = thisCourse.domainId;
+		//insertion
+		for(domain in dList){
+			var option, selected = '';
+			if(domainId === domain){
+				selected = 'selected="selected"'
+			}
+			option = '<option '+selected+' value="'+domain+'">'+dList[domain]+'</option>';
+			$('#cEditDialog .cDomain').append(option);
+		}
+		//make check box right
+		if(thisCourse.visible === 1){
+			$('#cEditDialog .cVisible').prop('checked', 'true');
 		}else{
-			CA.view.infoMsg('Please select an activity first.');
+			$('#cEditDialog .cVisible').prop('checked', 'false');
 		}
-	}
-});
-//Functions Ends
+		//fill in the name
+		$('#cEditDialog .cName').val(thisCourse.name);
+		//fill in the code
+		$('#cEditDialog .cCode').val(thisCourse.num);
+		//open the dialog
+		$('#cEditDialog').dialog('open');
+	});
+	//add course
+	$('#addCourse, #addCourse1').click(function(){
+		//fill in the form in dialog
+		//add options to the selector
+		var dList = CA.actions.getDomains();
+		//empty the list
+		$('#cAddDialog .cDomain').find('option').remove();
+		//insertion
+		for(domain in dList){
+			option = '<option value="'+domain+'">'+dList[domain]+'</option>';
+			$('#cAddDialog .cDomain').append(option);
+		};
+		//open the dialog
+		$('#cAddDialog').dialog('open');
+	});
+	//delete course
+	$('#delCourse').click(function(){
+		//empty the input
+		$('#cDelDialog .confirm').val('');
+		//open the dialog
+		$('#cDelDialog').dialog('open');
+	});
+	//clone course
+	$('#cloCourse').click(function(){
+		//use this course's name as default
+		$('#cCloDialog .cName').val(CA.wareHouse.courses[CA.actions.pointer.cIdx].name);
+		//open the dialog
+		$('#cCloDialog').dialog('open');
+	});
+	//resource functions
+	//edit resource
+	$('#editResource').click(function(){
+		var i = CA.view.getItemIndex('resources');
+		if(i != -1){
+			//use this resource's name as default
+			$('#rEditDialog .rName').val(CA.wareHouse.courses[CA.actions.pointer.cIdx].resources[i].name);
+			//update the pointer
+			CA.actions.pointer.rid = CA.wareHouse.courses[CA.actions.pointer.cIdx].resources[i].id;
+			//open the dialog
+			$('#rEditDialog').dialog('open');		
+		}else{
+			CA.view.infoMsg('Please select one resource first.');
+		}
+	});
+	//edit resource
+	$('#addResource').click(function(){
+		//clear the content
+		$('#rAddDialog').find('.rName').val('');
+		//open the dialog
+		$('#rAddDialog').dialog('open');
+	});
+	//delete resource
+	$('#delResource').click(function(){
+		//empty the input
+		$('#rDelDialog .confirm').val('');
+		//fetch the index
+		var i = CA.view.getItemIndex('resources');
+		if(i != -1){
+			//update the pointer
+			CA.actions.pointer.rid = CA.wareHouse.courses[CA.actions.pointer.cIdx].resources[i].id;
+			//open the dialog
+			$('#rDelDialog').dialog('open');
+		}else{
+			CA.view.infoMsg('Please select one resource first.');
+		}
+	});
+	//unit functions
+	//edit unit
+	$('#editUnit').click(function(){
+		var i = CA.view.getItemIndex('units');
+		if(i != -1){
+			//use this unit's name as default
+			$('#uEditDialog .uName').val(CA.wareHouse.courses[CA.actions.pointer.cIdx].units[i].name);
+			//update the pointer
+			CA.actions.pointer.uid = CA.wareHouse.courses[CA.actions.pointer.cIdx].units[i].id;
+			//open the dialog
+			$('#uEditDialog').dialog('open');		
+		}else{
+			CA.view.infoMsg('Please select one unit first.');
+		}
+	});
+	//edit unit
+	$('#addUnit').click(function(){
+		//clear the content
+		$('#uAddDialog').find('.uName').val('');
+		//open the dialog
+		$('#uAddDialog').dialog('open');
+	});
+	//delete resource
+	$('#delUnit').click(function(){
+		//empty the input
+		$('#uDelDialog .confirm').val('');
+		//fetch the index
+		var i = CA.view.getItemIndex('units');
+		if(i != -1){
+			//update the pointer
+			CA.actions.pointer.uid = CA.wareHouse.courses[CA.actions.pointer.cIdx].units[i].id;
+			//open the dialog
+			$('#uDelDialog').dialog('open');
+		}else{
+			CA.view.infoMsg('Please select one unit first.');
+		}
+	});
+	//activity functions
+	//delete activity
+	$('#delAct').click(function(){
+		var listName = $('#activities div:visible').attr('id');
+		if(listName){
+			//update the pointer, rid
+			var rid = listName.split('-')[1],
+				idx = CA.view.getItemIndex(listName);
+			CA.actions.pointer.rid = rid;
+			if(idx != -1){
+				//update the pointer, aid
+				var aid = CA.wareHouse.courses[CA.actions.pointer.cIdx].units[CA.actions.pointer.uIdx].activityIds[rid][idx];
+				CA.actions.pointer.aid = aid;
+				//open dialog
+				$('#aDelDialog').dialog('open');
+			}else{
+				CA.view.infoMsg('Please select an activity first.');
+			}
+		}
+	});
+	//Functions Ends
+};
 
 
 //-------------------------------------
 //test code
 //delete when it's done
-CA.actions.init();
+//CA.actions.init();
 //test code ends
 //-------------------------------------
 

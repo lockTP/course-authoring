@@ -1,11 +1,29 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta />
-<title>Course Authoring</title>
-<!--<script type="text/javascript" src="demo.js"></script>-->
-<link rel="stylesheet" type="text/css" href="css/global.css"/>
-<link href="jqueryui/jquery-ui.css" rel="stylesheet">
+	<meta http-equiv="charset" content="utf-8"/>
+	<meta name="author" content="Fei Han, Group 3"/>
+	<meta name="application" content="Course Authoring"/>
+	
+	<title>Course Authoring</title>
+	
+	<!-- css -->
+	<link rel="stylesheet" type="text/css" href="css/global.css"/>
+	<link href="jqueryui/jquery-ui.css" rel="stylesheet">
+	<!-- css ends -->
+	
+	<!-- Javascript -->
+	<script src="jqueryui/external/jquery/jquery.js"></script>
+	<script src="jqueryui/jquery-ui.min.js"></script>
+	<script src="script/slip.js"></script>
+	<script src="script/ca.class.js"></script>
+	<script>
+		//call the initialization
+		$('document').ready(function(){
+			CA.actions.init();
+		});
+	</script>
+	<!-- Javascript ends -->
 </head>
 <body>
 <div class="wrap">
@@ -194,11 +212,5 @@
 	</div>
 </div>
 <!-- Info Sign ends -->
-<!-- Javascript -->
-<script src="jqueryui/external/jquery/jquery.js"></script>
-<script src="jqueryui/jquery-ui.js"></script>
-<script src="script/slip.js"></script>
-<script src="script/ca.js"></script>
-<!-- Javascript ends -->
 </body>
 </html>
